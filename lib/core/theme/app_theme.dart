@@ -1,60 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 
-class AppColors {
-  static const Color primary = Color(0xFF5E8D83); // Forest Teal
-  static const Color forestTeal = Color(0xFF5E8D83);
-  static const Color deepCharcoal = Color(0xFF161D23);
-  static const Color pureWhite = Colors.white;
-  static const Color success = Color(0xFF5E8D83);
-  static const Color warning = Color(0xFFFF9800); // Orange
-  static const Color danger = Color(0xFFF44336); // Red
-  static const Color error = Color(0xFFF44336);
-  static const Color background = Color(0xFFF4F7F7); // Light Gray
-  static const Color card = Colors.white;
-}
+export 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 
 class AppTheme {
-  static ThemeData get lightTheme {
-    return ThemeData(
+  /// RentDirect-style dark app shell (glass + green accents).
+  static ThemeData get darkTheme {
+    final base = ThemeData(
       useMaterial3: true,
-      primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: AppColors.background,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        primary: AppColors.primary,
-        error: AppColors.danger,
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: AppColors.canvasDark,
+    );
+    return base.copyWith(
+      colorScheme: ColorScheme.dark(
+        primary: AppColors.accentGreen,
+        onPrimary: Colors.white,
+        surface: AppColors.surfaceDark,
+        onSurface: AppColors.textOnDark,
+        error: AppColors.error,
+        onError: Colors.white,
       ),
-      textTheme: TextTheme(
-        displayLarge: GoogleFonts.poppins(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-        titleLarge: GoogleFonts.poppins(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-        titleMedium: GoogleFonts.poppins(
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppColors.textOnDark,
+        titleTextStyle: GoogleFonts.poppins(
           fontSize: 18,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textOnDark,
         ),
-        bodyLarge: GoogleFonts.inter(
-          fontSize: 16,
-          color: Colors.black87,
+      ),
+      textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
+        bodyColor: AppColors.textOnDark,
+        displayColor: AppColors.textOnDark,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.glassFill,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.glassBorder),
         ),
-        bodySmall: GoogleFonts.inter(
-          fontSize: 13,
-          color: Colors.black54,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.glassBorder),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.accentGreen, width: 1.5),
+        ),
+        hintStyle: GoogleFonts.inter(
+          color: AppColors.textMutedOnDark,
+          fontSize: 14,
+        ),
+        labelStyle: GoogleFonts.inter(
+          color: AppColors.textMutedOnDark,
+          fontSize: 12,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.accentGreen,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          textStyle: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.textOnDark,
+          side: const BorderSide(color: AppColors.glassBorder),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((s) {
+          if (s.contains(WidgetState.selected)) return AppColors.accentGreen;
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(Colors.white),
+        side: const BorderSide(color: AppColors.glassBorder, width: 1.5),
       ),
     );
   }

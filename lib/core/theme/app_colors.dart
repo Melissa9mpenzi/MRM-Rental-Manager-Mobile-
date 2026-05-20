@@ -49,4 +49,14 @@ abstract class AppColors {
   static Color tealWith(double opacity) => forestTeal.withOpacity(opacity);
   static Color slateWith(double opacity) => sageSlate.withOpacity(opacity);
   static Color charcoalWith(double opacity) => deepCharcoal.withOpacity(opacity);
+
+  // ── RentDirect mobile (dark / glass) ───────────────────────────
+  static const Color canvasDark = Color(0xFF060A0C);
+  static const Color surfaceDark = Color(0xFF10181C);
+  static const Color glassFill = Color(0x1AFFFFFF);
+  /// Design board primary emerald (#22C55E)
+  static const Color accentGreen = Color(0xFF22C55E);
+  static const Color glassBorder = Color(0x33FFFFFF);
+  static const Color textOnDark = Color(0xFFF8FAFC);
+  static const Color textMutedOnDark = Color(0xFF94A3B8);
 }

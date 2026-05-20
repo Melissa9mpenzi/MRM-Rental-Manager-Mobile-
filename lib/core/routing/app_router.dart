@@ -1,147 +1,181 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_tenant/core/routing/route_names.dart';
-import 'package:mobile_tenant/features/auth/screens/login_screen.dart';
-import 'package:mobile_tenant/features/auth/screens/register_screen.dart';
-import 'package:mobile_tenant/features/auth/screens/splash_screen.dart';
-import 'package:mobile_tenant/features/dashboard/screens/dashboard_screen.dart';
-import 'package:mobile_tenant/features/maintenance/screens/maintenance_detail_screen.dart';
-import 'package:mobile_tenant/features/maintenance/screens/maintenance_list_screen.dart';
-import 'package:mobile_tenant/features/maintenance/screens/submit_maintenance_screen.dart';
-import 'package:mobile_tenant/features/notifications/screens/notifications_screen.dart';
-import 'package:mobile_tenant/features/payments/screens/payment_detail_screen.dart';
-import 'package:mobile_tenant/features/payments/screens/payments_list_screen.dart';
-import 'package:mobile_tenant/features/payments/screens/record_payment_screen.dart';
-import 'package:mobile_tenant/features/profile/screens/change_password_screen.dart';
-import 'package:mobile_tenant/features/profile/screens/edit_profile_screen.dart';
-import 'package:mobile_tenant/features/profile/screens/profile_screen.dart';
-import 'package:mobile_tenant/core/widgets/app_shell.dart';
+import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
+import 'package:rental_mgr_mobile/core/auth/onboarding_navigation.dart';
+import 'package:rental_mgr_mobile/core/routing/route_names.dart';
+import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
+import 'package:rental_mgr_mobile/core/widgets/auth_page_scaffold.dart';
+import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
+import 'package:rental_mgr_mobile/core/widgets/app_shell.dart';
+import 'package:rental_mgr_mobile/features/admin/admin_moderation_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/account_approved_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/auth_entry_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/forgot_password_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/kyc_rejected_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/kyc_review_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/review_details_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/kyc_upload_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/login_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/onboarding_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/pending_approval_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/register_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/reset_password_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/select_role_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/splash_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/verify_phone_screen.dart';
+import 'package:rental_mgr_mobile/features/dashboard/admin_dashboard_screen.dart';
+import 'package:rental_mgr_mobile/features/dashboard/agent_dashboard_screen.dart';
+import 'package:rental_mgr_mobile/features/dashboard/landlord_dashboard_screen.dart';
+import 'package:rental_mgr_mobile/features/dashboard/tenant_dashboard_screen.dart';
+import 'package:rental_mgr_mobile/features/landlord/landlord_properties_screen.dart';
+import 'package:rental_mgr_mobile/features/maintenance/maintenance_screen.dart';
+import 'package:rental_mgr_mobile/features/maintenance/submit_maintenance_screen.dart';
+import 'package:rental_mgr_mobile/features/marketplace/property_detail_screen.dart';
+import 'package:rental_mgr_mobile/features/marketplace/property_search_screen.dart';
+import 'package:rental_mgr_mobile/features/messages/message_thread_screen.dart';
+import 'package:rental_mgr_mobile/features/messages/messages_screen.dart';
+import 'package:rental_mgr_mobile/features/profile/settings_screen.dart';
+import 'package:rental_mgr_mobile/features/tenant/contracts_screen.dart';
+import 'package:rental_mgr_mobile/features/tenant/pay_rent_screen.dart';
+import 'package:rental_mgr_mobile/features/tenant/saved_listings_screen.dart';
+import 'package:rental_mgr_mobile/features/notifications/notifications_screen.dart';
+import 'package:rental_mgr_mobile/features/profile/profile_screen.dart';
+import 'package:rental_mgr_mobile/features/wallet/wallet_screen.dart';
+import 'package:rental_mgr_mobile/language_selection_screen.dart';
 
+final routerProvider = Provider<GoRouter>((ref) {
+  final auth = ref.watch(authProvider);
 
-final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: RouteNames.splash,
-    debugLogDiagnostics: true,
+    refreshListenable: _AuthRefreshListenable(ref),
+    redirect: (context, state) {
+      if (!auth.bootstrapped) return null;
+
+      final path = state.uri.path;
+      final user = auth.user;
+      final loggedIn = auth.isAuthenticated && user != null;
+
+      const preAuth = {
+        RouteNames.splash,
+        RouteNames.onboarding,
+        RouteNames.authEntry,
+        RouteNames.language,
+        RouteNames.login,
+        RouteNames.forgotPassword,
+        RouteNames.resetPassword,
+        RouteNames.register,
+        RouteNames.verifyPhone,
+      };
+
+      if (loggedIn && user != null && isAccountGated(user)) {
+        final dest = postLoginDestination(user);
+        final onGateScreen = authGatePaths.contains(path) || path.startsWith(RouteNames.kyc);
+        if (_isShellRoute(path) && !onGateScreen) return dest;
+      }
+
+      if (!loggedIn) {
+        if (_isShellRoute(path) || authGatePaths.contains(path)) {
+          return RouteNames.onboarding;
+        }
+        return null;
+      }
+
+      if (preAuth.contains(path) && path != RouteNames.splash && path != RouteNames.language) {
+        return postLoginDestination(user!);
+      }
+
+      return null;
+    },
     routes: [
-      //  Auth routes
-      GoRoute(
-        path: RouteNames.splash,
-        name: 'splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
+      GoRoute(path: RouteNames.splash, builder: (_, __) => const SplashScreen()),
+      GoRoute(path: RouteNames.onboarding, builder: (_, __) => const OnboardingScreen()),
+      GoRoute(path: RouteNames.authEntry, builder: (_, __) => const AuthEntryScreen()),
+      GoRoute(path: RouteNames.language, builder: (_, __) => const LanguageSelectionScreen()),
       GoRoute(
         path: RouteNames.login,
-        name: 'login',
-        pageBuilder: (context, state) => _fadeTransition(
-          state,
-          const LoginScreen(),
+        builder: (_, state) => LoginScreen(
+          initialEmail: state.uri.queryParameters['email'],
+          onboarding: state.uri.queryParameters['onboarding'] == '1',
         ),
       ),
       GoRoute(
-        path: RouteNames.register,
-        name: 'register',
-        pageBuilder: (context, state) => _fadeTransition(
-          state,
-          const RegisterScreen(),
+        path: RouteNames.forgotPassword,
+        builder: (_, __) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.resetPassword,
+        builder: (_, state) => ResetPasswordScreen(
+          email: state.uri.queryParameters['email'] ?? '',
         ),
       ),
-
-      // ── Shell with Bottom Navigation ────────────────────────────
+      GoRoute(path: RouteNames.register, builder: (_, __) => const RegisterScreen()),
+      GoRoute(
+        path: RouteNames.verifyPhone,
+        builder: (_, state) => VerifyPhoneScreen(email: state.uri.queryParameters['email'] ?? ''),
+      ),
+      GoRoute(path: RouteNames.selectRole, builder: (_, __) => const SelectRoleScreen()),
+      GoRoute(
+        path: RouteNames.kyc,
+        builder: (_, state) => KycUploadScreen(roleLabel: state.uri.queryParameters['role'] ?? 'landlord'),
+      ),
+      GoRoute(path: RouteNames.kycReview, builder: (_, __) => const KycReviewScreen()),
+      GoRoute(path: RouteNames.reviewDetails, builder: (_, __) => const ReviewDetailsScreen()),
+      GoRoute(path: RouteNames.pendingApproval, builder: (_, __) => const PendingApprovalScreen()),
+      GoRoute(path: RouteNames.kycRejected, builder: (_, __) => const KycRejectedScreen()),
+      GoRoute(path: RouteNames.accountApproved, builder: (_, __) => const AccountApprovedScreen()),
       ShellRoute(
-        builder: (context, state, child) => AppShell(child: child),
+        builder: (_, __, child) => AppShell(child: child),
         routes: [
+          GoRoute(path: RouteNames.tenantDashboard, builder: (_, __) => const TenantDashboardScreen()),
+          GoRoute(path: RouteNames.landlordDashboard, builder: (_, __) => const LandlordDashboardScreen()),
+          GoRoute(path: RouteNames.agentDashboard, builder: (_, __) => const AgentDashboardScreen()),
+          GoRoute(path: RouteNames.adminDashboard, builder: (_, __) => const AdminDashboardScreen()),
+          GoRoute(path: RouteNames.search, builder: (_, __) => const PropertySearchScreen()),
           GoRoute(
-            path: RouteNames.dashboard,
-            name: 'dashboard',
-            builder: (context, state) => const DashboardScreen(),
+            path: '/listings/:id',
+            builder: (_, state) => PropertyDetailScreen(unitId: int.parse(state.pathParameters['id']!)),
           ),
+          GoRoute(path: RouteNames.saved, builder: (_, __) => const SavedListingsScreen()),
+          GoRoute(path: RouteNames.contracts, builder: (_, __) => const ContractsScreen()),
+          GoRoute(path: RouteNames.payRent, builder: (_, __) => const PayRentScreen()),
+          GoRoute(path: RouteNames.maintenance, builder: (_, __) => const MaintenanceScreen()),
+          GoRoute(path: RouteNames.submitMaintenance, builder: (_, __) => const SubmitMaintenanceScreen()),
+          GoRoute(path: RouteNames.landlordProperties, builder: (_, __) => const LandlordPropertiesScreen()),
+          GoRoute(path: RouteNames.settings, builder: (_, __) => const SettingsScreen()),
+          GoRoute(path: RouteNames.adminModeration, builder: (_, __) => const AdminModerationScreen()),
+          GoRoute(path: RouteNames.messages, builder: (_, __) => const MessagesScreen()),
           GoRoute(
-            path: RouteNames.payments,
-            name: 'payments',
-            builder: (context, state) => const PaymentsListScreen(),
-            routes: [
-              GoRoute(
-                path: 'record',
-                name: 'record-payment',
-                builder: (context, state) => const RecordPaymentScreen(),
-              ),
-              GoRoute(
-                path: ':id',
-                name: 'payment-detail',
-                builder: (context, state) => PaymentDetailScreen(
-                  paymentId: state.pathParameters['id']!,
-                ),
-              ),
-            ],
+            path: '/messages/:threadId',
+            builder: (_, state) => MessageThreadScreen(threadId: int.parse(state.pathParameters['threadId']!)),
           ),
-          GoRoute(
-            path: RouteNames.maintenance,
-            name: 'maintenance',
-            builder: (context, state) => const MaintenanceListScreen(),
-            routes: [
-              GoRoute(
-                path: 'submit',
-                name: 'submit-maintenance',
-                builder: (context, state) => const SubmitMaintenanceScreen(),
-              ),
-              GoRoute(
-                path: ':id',
-                name: 'maintenance-detail',
-                builder: (context, state) => MaintenanceDetailScreen(
-                  requestId: state.pathParameters['id']!,
-                ),
-              ),
-            ],
-          ),
-          GoRoute(
-            path: RouteNames.notifications,
-            name: 'notifications',
-            builder: (context, state) => const NotificationsScreen(),
-          ),
-          GoRoute(
-            path: RouteNames.profile,
-            name: 'profile',
-            builder: (context, state) => const ProfileScreen(),
-            routes: [
-              GoRoute(
-                path: 'edit',
-                name: 'edit-profile',
-                builder: (context, state) => const EditProfileScreen(),
-              ),
-              GoRoute(
-                path: 'change-password',
-                name: 'change-password',
-                builder: (context, state) => const ChangePasswordScreen(),
-              ),
-            ],
-          ),
+          GoRoute(path: RouteNames.notifications, builder: (_, __) => const NotificationsScreen()),
+          GoRoute(path: RouteNames.wallet, builder: (_, __) => const WalletScreen()),
+          GoRoute(path: RouteNames.profile, builder: (_, __) => const ProfileScreen()),
         ],
       ),
     ],
-
-    // ── Error handler ──────────────────────────────────────────────
-    errorBuilder: (context, state) => Scaffold(
+    errorBuilder: (context, state) => AuthPageScaffold(
       body: Center(
-        child: Text(
-          'Page not found: ${state.error}',
-          style: const TextStyle(fontSize: 16),
+        child: GlassPanel(
+          child: Text('Route not found\n${state.uri}', textAlign: TextAlign.center, style: AppTextStyles.bodyMediumOnDark),
         ),
       ),
     ),
   );
 });
 
-/// Shared fade-transition page builder
-CustomTransitionPage<void> _fadeTransition(
-  GoRouterState state,
-  Widget child,
-) {
-  return CustomTransitionPage<void>(
-    key: state.pageKey,
-    child: child,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-        FadeTransition(opacity: animation, child: child),
-    transitionDuration: const Duration(milliseconds: 250),
-  );
+bool _isShellRoute(String path) {
+  if (RouteNames.shellPaths.contains(path)) return true;
+  if (path.startsWith('/listings/')) return true;
+  if (path.startsWith('/messages/') && path != RouteNames.messages) return true;
+  return false;
+}
+
+class _AuthRefreshListenable extends ChangeNotifier {
+  _AuthRefreshListenable(this._ref) {
+    _ref.listen(authProvider, (_, __) => notifyListeners());
+  }
+  final Ref _ref;
 }

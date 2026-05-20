@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_tenant/core/theme/app_colors.dart';
-import 'package:mobile_tenant/core/theme/app_text_styles.dart';
+import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
+import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 
 enum BadgeStatus { paid, arrears, vacant, maintenance, open, inProgress, resolved, low, medium, high, urgent }
 

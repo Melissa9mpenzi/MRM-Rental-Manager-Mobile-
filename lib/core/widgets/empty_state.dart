@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_tenant/core/theme/app_colors.dart';
-import 'package:mobile_tenant/core/theme/app_text_styles.dart';
-import 'package:mobile_tenant/core/widgets/app_button.dart';
+import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
+import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
+import 'package:rental_mgr_mobile/core/widgets/app_button.dart';
 
 /// Empty state widget — icon + message + optional CTA
 class EmptyState extends StatelessWidget {
