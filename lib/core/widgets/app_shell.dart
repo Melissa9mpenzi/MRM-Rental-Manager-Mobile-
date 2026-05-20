@@ -19,6 +19,7 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final shellKey = ref.watch(shellScaffoldKeyProvider);
     final user = ref.watch(authProvider).user;
+    final role = user?.role ?? 'tenant';
     final home = user != null ? roleDashboardPath(user.role) : RouteNames.tenantDashboard;
 
     final path = GoRouterState.of(context).uri.path;
@@ -45,19 +46,20 @@ class AppShell extends ConsumerWidget {
       Icons.person_rounded,
     ];
 
-    var current = 0;
-    for (var i = 0; i < bottomRoutes.length; i++) {
-      if (path == bottomRoutes[i]) {
-        current = i;
-        break;
-      }
-    }
+    final current = _bottomNavIndex(path, role, home);
 
     final showBottomNav = bottomRoutes.contains(path) ||
         path == RouteNames.search ||
         path == RouteNames.saved ||
         path == RouteNames.contracts ||
-        path == RouteNames.adminDashboard;
+        path == RouteNames.payRent ||
+        path == RouteNames.landlordProperties ||
+        path == RouteNames.maintenance ||
+        path == RouteNames.submitMaintenance ||
+        path == RouteNames.adminDashboard ||
+        path == RouteNames.adminModeration ||
+        ((role == 'tenant' || role == 'staff') && path.startsWith('/listings/')) ||
+        (path.startsWith('/messages/') && path != RouteNames.messages);
 
     return Scaffold(
       key: shellKey,
@@ -76,7 +78,7 @@ class AppShell extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: List.generate(5, (i) {
-                      final active = i == current && bottomRoutes.contains(path);
+                      final active = i == current;
                       return InkWell(
                         onTap: () => context.go(bottomRoutes[i]),
                         borderRadius: BorderRadius.circular(12),
@@ -116,4 +118,35 @@ class AppShell extends ConsumerWidget {
 /// Opens the shell drawer from nested scaffolds.
 void openAppDrawer(BuildContext context, WidgetRef ref) {
   ref.read(shellScaffoldKeyProvider).currentState?.openDrawer();
+}
+
+int _bottomNavIndex(String path, String role, String home) {
+  if (path == RouteNames.messages) return 1;
+  if (path == RouteNames.notifications) return 2;
+  if (path == RouteNames.wallet) return 3;
+  if (path == RouteNames.profile) return 4;
+  if (path == home) return 0;
+  if (role == 'tenant') {
+    if (path == RouteNames.search ||
+        path == RouteNames.saved ||
+        path == RouteNames.contracts ||
+        path == RouteNames.payRent ||
+        path.startsWith('/listings/')) {
+      return 0;
+    }
+  }
+  if (role == 'landlord') {
+    if (path == RouteNames.landlordProperties ||
+        path == RouteNames.maintenance ||
+        path == RouteNames.submitMaintenance) {
+      return 0;
+    }
+  }
+  if (role == 'staff' && (path == RouteNames.search || path.startsWith('/listings/'))) {
+    return 0;
+  }
+  if (role == 'admin' && (path == RouteNames.adminDashboard || path == RouteNames.adminModeration)) {
+    return 0;
+  }
+  return 0;
 }

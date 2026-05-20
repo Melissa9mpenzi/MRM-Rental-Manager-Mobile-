@@ -118,6 +118,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  /// After obtaining a Firebase ID token (see `docs/MOBILE_OAUTH_AND_WALLET.md`).
+  Future<AppUser> loginWithFirebaseIdToken(String idToken) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final result = await _authApi.firebaseSignIn(idToken: idToken.trim());
+      await _session.saveSession(
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+        user: result.user,
+      );
+      state = AuthState(
+        user: result.user,
+        isAuthenticated: true,
+        bootstrapped: true,
+      );
+      return result.user;
+    } catch (e) {
+      throw Exception(apiErrorMessage(e, 'Firebase sign-in failed.'));
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
   Future<AppUser> updateRole(String uiRole) async {
     state = state.copyWith(isLoading: true);
     try {

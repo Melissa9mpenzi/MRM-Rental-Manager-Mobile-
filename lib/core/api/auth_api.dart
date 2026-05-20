@@ -46,6 +46,20 @@ class AuthApi {
     );
   }
 
+  /// Exchange Firebase ID token for API JWT (`POST /auth/firebase`).
+  Future<LoginResult> firebaseSignIn({required String idToken}) async {
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/auth/firebase',
+      data: {'id_token': idToken},
+    );
+    final data = res.data!;
+    return LoginResult(
+      accessToken: data['access_token'] as String,
+      refreshToken: data['refresh_token'] as String,
+      user: AppUser.fromJson(data['user'] as Map<String, dynamic>),
+    );
+  }
+
   Future<void> logout() async {
     try {
       await _dio.post('/auth/logout');

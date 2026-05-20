@@ -11,6 +11,7 @@ import 'package:rental_mgr_mobile/core/widgets/auth_flow_stepper.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_hero_image.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_page_scaffold.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
+import 'package:rental_mgr_mobile/core/widgets/social_sign_in_buttons.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -212,25 +213,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _snack('Google sign-in coming soon'),
-                      icon: const Icon(Icons.g_mobiledata_rounded, size: 28),
-                      label: const Text('Google'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _snack('Apple sign-in coming soon'),
-                      icon: const Icon(Icons.apple_rounded),
-                      label: const Text('Apple'),
-                    ),
-                  ),
-                ],
-              ),
+              const SocialSignInButtons(onboarding: false),
               const SizedBox(height: 12),
               TextButton(
                 onPressed: () => context.pop(),

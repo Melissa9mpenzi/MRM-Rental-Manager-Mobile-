@@ -1,11 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rental_mgr_mobile/core/routing/app_router.dart';
 import 'package:rental_mgr_mobile/core/theme/app_theme.dart';
+import 'package:rental_mgr_mobile/firebase_options.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  } catch (e, st) {
+    debugPrint('Firebase.initializeApp failed: $e\n$st');
+  }
   runApp(const ProviderScope(child: RentalMgrApp()));
 }
 

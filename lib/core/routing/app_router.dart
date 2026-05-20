@@ -55,7 +55,28 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       final path = state.uri.path;
       final user = auth.user;
-      final loggedIn = auth.isAuthenticated && user != null;
+
+      if (!auth.isAuthenticated || user == null) {
+        if (_isShellRoute(path) || authGatePaths.contains(path)) {
+          return RouteNames.onboarding;
+        }
+        return null;
+      }
+
+      final u = user;
+
+      if (isAccountGated(u)) {
+        final dest = postLoginDestination(u);
+        final onGateScreen = authGatePaths.contains(path) || path.startsWith(RouteNames.kyc);
+        if (_isShellRoute(path) && !onGateScreen) return dest;
+      }
+
+      if (isRoleDashboardPath(path)) {
+        final expected = roleDashboardPath(u.role);
+        if (path != expected) {
+          return expected;
+        }
+      }
 
       const preAuth = {
         RouteNames.splash,
@@ -69,21 +90,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         RouteNames.verifyPhone,
       };
 
-      if (loggedIn && user != null && isAccountGated(user)) {
-        final dest = postLoginDestination(user);
-        final onGateScreen = authGatePaths.contains(path) || path.startsWith(RouteNames.kyc);
-        if (_isShellRoute(path) && !onGateScreen) return dest;
-      }
-
-      if (!loggedIn) {
-        if (_isShellRoute(path) || authGatePaths.contains(path)) {
-          return RouteNames.onboarding;
-        }
-        return null;
-      }
-
       if (preAuth.contains(path) && path != RouteNames.splash && path != RouteNames.language) {
-        return postLoginDestination(user!);
+        return postLoginDestination(u);
       }
 
       return null;

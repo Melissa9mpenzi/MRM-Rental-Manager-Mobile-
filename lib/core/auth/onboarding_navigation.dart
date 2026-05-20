@@ -15,6 +15,13 @@ String roleDashboardPath(String role) {
   }
 }
 
+bool isRoleDashboardPath(String path) {
+  return path == RouteNames.tenantDashboard ||
+      path == RouteNames.landlordDashboard ||
+      path == RouteNames.agentDashboard ||
+      path == RouteNames.adminDashboard;
+}
+
 /// 1 splash 2 onboarding 3 register 4 verify 5 role 6 kyc 7 kyc-review 8 review-details 9 pending 10 approved
 const int authFlowTotalSteps = 10;
 

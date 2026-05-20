@@ -1,28 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:rental_mgr_mobile/core/payments/payment_method_config.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
+import 'package:rental_mgr_mobile/core/widgets/payment_method_icon.dart';
 
-enum PaymentMethod { mtn, airtel, visa, sui }
+export 'package:rental_mgr_mobile/core/payments/payment_method_config.dart' show AppPaymentMethod;
 
-extension PaymentMethodLabel on PaymentMethod {
-  String get label => switch (this) {
-        PaymentMethod.mtn => 'MTN Mobile Money',
-        PaymentMethod.airtel => 'Airtel Money',
-        PaymentMethod.visa => 'Visa / Card',
-        PaymentMethod.sui => 'Sui Wallet',
-      };
-
-  IconData get icon => switch (this) {
-        PaymentMethod.mtn => Icons.phone_android_rounded,
-        PaymentMethod.airtel => Icons.sim_card_outlined,
-        PaymentMethod.visa => Icons.credit_card_rounded,
-        PaymentMethod.sui => Icons.account_balance_wallet_outlined,
-      };
-}
-
-Future<PaymentMethod?> showPaymentMethodSheet(BuildContext context) {
-  return showModalBottomSheet<PaymentMethod>(
+Future<AppPaymentMethod?> showPaymentMethodSheet(BuildContext context) {
+  return showModalBottomSheet<AppPaymentMethod>(
     context: context,
     backgroundColor: AppColors.surfaceDark,
     shape: const RoundedRectangleBorder(
@@ -38,7 +24,7 @@ Future<PaymentMethod?> showPaymentMethodSheet(BuildContext context) {
             children: [
               Text('Choose payment method', style: AppTextStyles.headingMedium),
               const SizedBox(height: 12),
-              ...PaymentMethod.values.map(
+              ...AppPaymentMethod.tenantCheckout.map(
                 (m) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Material(
@@ -51,7 +37,7 @@ Future<PaymentMethod?> showPaymentMethodSheet(BuildContext context) {
                         borderRadius: 14,
                         child: Row(
                           children: [
-                            Icon(m.icon, color: AppColors.accentGreen),
+                            PaymentMethodIcon(method: m, size: 40),
                             const SizedBox(width: 12),
                             Expanded(child: Text(m.label, style: AppTextStyles.bodyMediumOnDark)),
                             const Icon(Icons.chevron_right_rounded, color: AppColors.textMutedOnDark),

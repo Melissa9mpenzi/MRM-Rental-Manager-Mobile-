@@ -20,40 +20,54 @@ class NotificationsScreen extends ConsumerWidget {
     return PageScaffold(
       title: 'Notifications',
       body: items.when(
-        data: (list) {
-          if (list.isEmpty) {
-            return Center(child: Text('No notifications.', style: AppTextStyles.bodyMediumOnDark));
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: list.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
-            itemBuilder: (_, i) {
-              final n = list[i] as Map<String, dynamic>;
-              return GlassPanel(
-                padding: const EdgeInsets.all(14),
-                borderRadius: 14,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        data: (list) => RefreshIndicator(
+          color: AppColors.accentGreen,
+          onRefresh: () async => ref.invalidate(notificationsListProvider),
+          child: list.isEmpty
+              ? ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   children: [
-                    const Icon(Icons.notifications_active_outlined, color: AppColors.forestTeal),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${n['title'] ?? n['message'] ?? 'Notification'}', style: AppTextStyles.bodyMediumOnDark),
-                          if (n['body'] != null)
-                            Text('${n['body']}', style: AppTextStyles.captionOnDark),
-                        ],
-                      ),
+                    SizedBox(
+                      height: MediaQuery.sizeOf(context).height * 0.35,
+                      child: Center(child: Text('No notifications.', style: AppTextStyles.bodyMediumOnDark)),
                     ),
                   ],
+                )
+              : ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  itemCount: list.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (_, i) {
+                    final n = list[i] as Map<String, dynamic>;
+                    final body = n['body'] ?? n['message'] ?? '';
+                    return GlassPanel(
+                      padding: const EdgeInsets.all(14),
+                      borderRadius: 14,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.notifications_active_outlined, color: AppColors.forestTeal),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${n['title'] ?? 'Notification'}',
+                                  style: AppTextStyles.bodyMediumOnDark,
+                                ),
+                                if ('$body'.isNotEmpty)
+                                  Text('$body', style: AppTextStyles.captionOnDark),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          );
-        },
+        ),
         loading: () => const Center(child: CircularProgressIndicator(color: AppColors.accentGreen)),
         error: (_, __) => Center(child: Text('Could not load notifications.', style: AppTextStyles.captionOnDark)),
       ),

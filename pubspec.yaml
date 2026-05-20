@@ -18,6 +18,13 @@ dependencies:
   dio: ^5.4.3+1
   flutter_secure_storage: ^9.2.2
   image_picker: ^1.0.7
+  shared_preferences: ^2.5.5
+  firebase_core: ^4.9.0
+  firebase_auth: ^6.5.1
+  # Stay on 6.x: 7.x removed the default constructor / signIn() used in our helper.
+  google_sign_in: '>=6.2.2 <7.0.0'
+  flutter_svg: ^2.0.10+1
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +37,12 @@ flutter:
     - assets/images/hero-villa.jpg
     - assets/images/listing-luxury.jpg
     - assets/images/listing-interior.jpg
+    - assets/icons/google.svg
+    - assets/icons/apple.svg
+    - assets/icons/payments/mtn.svg
+    - assets/icons/payments/airtel.svg
+    - assets/icons/payments/visa.svg
+    - assets/icons/payments/bank.svg
+    - assets/icons/payments/cash.svg
+    - assets/icons/payments/other.svg
+    - assets/icons/payments/sui.svg

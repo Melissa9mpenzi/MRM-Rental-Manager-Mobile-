@@ -19,6 +19,8 @@ class PropertySearchScreen extends ConsumerStatefulWidget {
 class _PropertySearchScreenState extends ConsumerState<PropertySearchScreen> {
   final _search = TextEditingController();
   double _maxRent = 5000000;
+  double _minRent = 0;
+  String? _unitType;
   List<dynamic> _list = [];
   bool _loading = false;
 
@@ -33,7 +35,9 @@ class _PropertySearchScreenState extends ConsumerState<PropertySearchScreen> {
     try {
       final rows = await ref.read(marketplaceApiProvider).listings(
             search: _search.text,
+            minRent: _minRent > 0 ? _minRent : null,
             maxRent: _maxRent,
+            unitType: (_unitType != null && _unitType!.isNotEmpty) ? _unitType : null,
           );
       setState(() => _list = rows);
     } finally {
@@ -137,21 +141,81 @@ class _PropertySearchScreenState extends ConsumerState<PropertySearchScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.surfaceDark,
+      isScrollControlled: true,
       builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom: 20 + MediaQuery.paddingOf(ctx).bottom,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text('Unit type', style: AppTextStyles.headingSmallOnDark),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String?>(
+              value: _unitType,
+              decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
+              dropdownColor: AppColors.surfaceDark,
+              style: AppTextStyles.bodySmallOnDark,
+              items: [
+                DropdownMenuItem<String?>(
+                  value: null,
+                  child: Text('Any', style: AppTextStyles.bodySmallOnDark),
+                ),
+                DropdownMenuItem(
+                  value: 'studio',
+                  child: Text('Studio', style: AppTextStyles.bodySmallOnDark),
+                ),
+                DropdownMenuItem(
+                  value: 'bedsitter',
+                  child: Text('Bedsitter', style: AppTextStyles.bodySmallOnDark),
+                ),
+                DropdownMenuItem(
+                  value: 'one_bedroom',
+                  child: Text('1 bedroom', style: AppTextStyles.bodySmallOnDark),
+                ),
+                DropdownMenuItem(
+                  value: 'two_bedroom',
+                  child: Text('2 bedroom', style: AppTextStyles.bodySmallOnDark),
+                ),
+                DropdownMenuItem(
+                  value: 'three_bedroom',
+                  child: Text('3 bedroom', style: AppTextStyles.bodySmallOnDark),
+                ),
+              ],
+              onChanged: (v) => setState(() => _unitType = v),
+            ),
+            const SizedBox(height: 20),
+            Text('Min rent (UGX)', style: AppTextStyles.headingSmallOnDark),
+            Slider(
+              value: _minRent.clamp(0, _maxRent),
+              min: 0,
+              max: 5000000,
+              divisions: 25,
+              label: _minRent <= 0 ? 'Any' : _minRent.round().toString(),
+              onChanged: (v) => setState(() => _minRent = v),
+            ),
             Text('Max rent (UGX)', style: AppTextStyles.headingSmallOnDark),
             Slider(
-              value: _maxRent,
+              value: _maxRent.clamp(_minRent > 0 ? _minRent : 200000, 10000000),
               min: 200000,
               max: 10000000,
               divisions: 20,
               label: _maxRent.round().toString(),
               onChanged: (v) => setState(() => _maxRent = v),
             ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () => setState(() {
+                _minRent = 0;
+                _unitType = null;
+              }),
+              child: const Text('Reset filters'),
+            ),
+            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(ctx);

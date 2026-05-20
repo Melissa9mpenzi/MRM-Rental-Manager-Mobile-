@@ -8,6 +8,7 @@ import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_page_scaffold.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
+import 'package:rental_mgr_mobile/core/widgets/social_sign_in_buttons.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, this.initialEmail, this.onboarding = false});
@@ -125,6 +126,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(child: Divider(color: AppColors.glassBorder)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('or continue with', style: AppTextStyles.captionOnDark),
+                  ),
+                  Expanded(child: Divider(color: AppColors.glassBorder)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SocialSignInButtons(onboarding: widget.onboarding),
               const SizedBox(height: 24),
               Align(
                 alignment: Alignment.centerRight,
