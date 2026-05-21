@@ -29,12 +29,17 @@ class AppUser {
     if (raw is String && raw.isNotEmpty) {
       kycAt = DateTime.tryParse(raw);
     }
+    final idRaw = json['id'];
+    final id = idRaw is int ? idRaw : (idRaw is num ? idRaw.toInt() : int.parse('$idRaw'));
+    final roleRaw = json['role'];
+    final role = roleRaw is String ? roleRaw : (roleRaw?.toString() ?? 'tenant');
+
     return AppUser(
-      id: json['id'] as int,
+      id: id,
       email: json['email'] as String,
       fullName: json['full_name'] as String? ?? '',
       phone: json['phone'] as String?,
-      role: json['role'] as String? ?? 'tenant',
+      role: role,
       isActive: json['is_active'] as bool? ?? true,
       emailVerified: json['email_verified'] as bool? ?? false,
       kycSubmittedAt: kycAt,

@@ -13,10 +13,20 @@ class DrawerMenuItem {
 }
 
 List<DrawerMenuItem> drawerItemsForRole(String role) {
+  if (role.startsWith('gov_') || role == 'system_admin') {
+    return [
+      const DrawerMenuItem(
+        label: 'Web portal',
+        icon: Icons.language,
+        route: RouteNames.governmentWebOnly,
+      ),
+      const DrawerMenuItem(label: 'Settings', icon: Icons.settings_outlined, route: RouteNames.settings),
+    ];
+  }
+
   final home = switch (role) {
     'landlord' => RouteNames.landlordDashboard,
     'staff' => RouteNames.agentDashboard,
-    'admin' => RouteNames.adminDashboard,
     _ => RouteNames.tenantDashboard,
   };
 
@@ -54,17 +64,6 @@ List<DrawerMenuItem> drawerItemsForRole(String role) {
       ...common.take(1),
       const DrawerMenuItem(label: 'Search listings', icon: Icons.search, route: RouteNames.search),
       ...common.skip(1),
-    ];
-  }
-
-  if (role == 'admin') {
-    return [
-      const DrawerMenuItem(label: 'Platform overview', icon: Icons.admin_panel_settings_outlined, route: RouteNames.adminDashboard),
-      const DrawerMenuItem(label: 'User moderation', icon: Icons.verified_user_outlined, route: RouteNames.adminModeration),
-      DrawerMenuItem(label: 'Messages', icon: Icons.chat_bubble_outline, route: RouteNames.messages),
-      DrawerMenuItem(label: 'Notifications', icon: Icons.notifications_outlined, route: RouteNames.notifications),
-      DrawerMenuItem(label: 'Profile', icon: Icons.person_outline, route: RouteNames.profile),
-      DrawerMenuItem(label: 'Settings', icon: Icons.settings_outlined, route: RouteNames.settings),
     ];
   }
 

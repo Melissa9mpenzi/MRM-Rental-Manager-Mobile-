@@ -32,12 +32,11 @@ enum AppPaymentMethod {
     };
   }
 
-  /// Tenant checkout sheet (MoMo + cards).
+  /// Tenant checkout: MoMo + Pesapal (card). Blockchain (sui) — phase 3.
   static const tenantCheckout = [
     AppPaymentMethod.mtnMomo,
     AppPaymentMethod.airtel,
     AppPaymentMethod.visa,
-    AppPaymentMethod.sui,
   ];
 
   /// Landlord record-payment options.

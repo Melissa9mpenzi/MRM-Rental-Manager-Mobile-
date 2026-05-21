@@ -1,21 +1,22 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_session.dart';
-import 'package:rental_mgr_mobile/core/config/api_config.dart';
+import 'package:rental_mgr_mobile/core/config/api_url_store.dart';
 
 final authSessionProvider = Provider<AuthSession>((ref) => AuthSession());
 
 final dioProvider = Provider<Dio>((ref) {
   final session = ref.watch(authSessionProvider);
-  return createDio(session);
+  final apiV1 = ref.watch(apiUrlProvider.notifier).apiV1;
+  return createDio(session, apiV1);
 });
 
-Dio createDio(AuthSession session) {
+Dio createDio(AuthSession session, String apiV1Base) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: ApiConfig.apiV1,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 30),
+      baseUrl: apiV1Base,
+      connectTimeout: const Duration(seconds: 45),
+      receiveTimeout: const Duration(seconds: 90),
       headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
     ),
   );
@@ -52,7 +53,7 @@ Dio createDio(AuthSession session) {
             try {
               final refreshDio = Dio(
                 BaseOptions(
-                  baseUrl: ApiConfig.apiV1,
+                  baseUrl: apiV1Base,
                   headers: {'Content-Type': 'application/json'},
                 ),
               );

@@ -56,8 +56,6 @@ class AppShell extends ConsumerWidget {
         path == RouteNames.landlordProperties ||
         path == RouteNames.maintenance ||
         path == RouteNames.submitMaintenance ||
-        path == RouteNames.adminDashboard ||
-        path == RouteNames.adminModeration ||
         ((role == 'tenant' || role == 'staff') && path.startsWith('/listings/')) ||
         (path.startsWith('/messages/') && path != RouteNames.messages);
 
@@ -143,9 +141,6 @@ int _bottomNavIndex(String path, String role, String home) {
     }
   }
   if (role == 'staff' && (path == RouteNames.search || path.startsWith('/listings/'))) {
-    return 0;
-  }
-  if (role == 'admin' && (path == RouteNames.adminDashboard || path == RouteNames.adminModeration)) {
     return 0;
   }
   return 0;

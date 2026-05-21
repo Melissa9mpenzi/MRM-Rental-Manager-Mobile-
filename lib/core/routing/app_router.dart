@@ -8,7 +8,7 @@ import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_page_scaffold.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
 import 'package:rental_mgr_mobile/core/widgets/app_shell.dart';
-import 'package:rental_mgr_mobile/features/admin/admin_moderation_screen.dart';
+import 'package:rental_mgr_mobile/features/auth/government_web_only_screen.dart';
 import 'package:rental_mgr_mobile/features/auth/account_approved_screen.dart';
 import 'package:rental_mgr_mobile/features/auth/auth_entry_screen.dart';
 import 'package:rental_mgr_mobile/features/auth/forgot_password_screen.dart';
@@ -24,7 +24,6 @@ import 'package:rental_mgr_mobile/features/auth/reset_password_screen.dart';
 import 'package:rental_mgr_mobile/features/auth/select_role_screen.dart';
 import 'package:rental_mgr_mobile/features/auth/splash_screen.dart';
 import 'package:rental_mgr_mobile/features/auth/verify_phone_screen.dart';
-import 'package:rental_mgr_mobile/features/dashboard/admin_dashboard_screen.dart';
 import 'package:rental_mgr_mobile/features/dashboard/agent_dashboard_screen.dart';
 import 'package:rental_mgr_mobile/features/dashboard/landlord_dashboard_screen.dart';
 import 'package:rental_mgr_mobile/features/dashboard/tenant_dashboard_screen.dart';
@@ -44,58 +43,14 @@ import 'package:rental_mgr_mobile/features/profile/profile_screen.dart';
 import 'package:rental_mgr_mobile/features/wallet/wallet_screen.dart';
 import 'package:rental_mgr_mobile/language_selection_screen.dart';
 
+/// Do not [ref.watch] auth here — that recreates [GoRouter] on every login and breaks navigation.
 final routerProvider = Provider<GoRouter>((ref) {
-  final auth = ref.watch(authProvider);
+  final authRefresh = _AuthRefreshListenable(ref);
 
   return GoRouter(
     initialLocation: RouteNames.splash,
-    refreshListenable: _AuthRefreshListenable(ref),
-    redirect: (context, state) {
-      if (!auth.bootstrapped) return null;
-
-      final path = state.uri.path;
-      final user = auth.user;
-
-      if (!auth.isAuthenticated || user == null) {
-        if (_isShellRoute(path) || authGatePaths.contains(path)) {
-          return RouteNames.onboarding;
-        }
-        return null;
-      }
-
-      final u = user;
-
-      if (isAccountGated(u)) {
-        final dest = postLoginDestination(u);
-        final onGateScreen = authGatePaths.contains(path) || path.startsWith(RouteNames.kyc);
-        if (_isShellRoute(path) && !onGateScreen) return dest;
-      }
-
-      if (isRoleDashboardPath(path)) {
-        final expected = roleDashboardPath(u.role);
-        if (path != expected) {
-          return expected;
-        }
-      }
-
-      const preAuth = {
-        RouteNames.splash,
-        RouteNames.onboarding,
-        RouteNames.authEntry,
-        RouteNames.language,
-        RouteNames.login,
-        RouteNames.forgotPassword,
-        RouteNames.resetPassword,
-        RouteNames.register,
-        RouteNames.verifyPhone,
-      };
-
-      if (preAuth.contains(path) && path != RouteNames.splash && path != RouteNames.language) {
-        return postLoginDestination(u);
-      }
-
-      return null;
-    },
+    refreshListenable: authRefresh,
+    redirect: (context, state) => _authRedirect(ref.read(authProvider), state),
     routes: [
       GoRoute(path: RouteNames.splash, builder: (_, __) => const SplashScreen()),
       GoRoute(path: RouteNames.onboarding, builder: (_, __) => const OnboardingScreen()),
@@ -110,7 +65,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RouteNames.forgotPassword,
-        builder: (_, __) => const ForgotPasswordScreen(),
+        builder: (_, state) => ForgotPasswordScreen(
+          initialEmail: state.uri.queryParameters['email'],
+          initialStep: state.uri.queryParameters['step'] == '2' ? 2 : 1,
+        ),
       ),
       GoRoute(
         path: RouteNames.resetPassword,
@@ -133,13 +91,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: RouteNames.pendingApproval, builder: (_, __) => const PendingApprovalScreen()),
       GoRoute(path: RouteNames.kycRejected, builder: (_, __) => const KycRejectedScreen()),
       GoRoute(path: RouteNames.accountApproved, builder: (_, __) => const AccountApprovedScreen()),
+      GoRoute(path: RouteNames.governmentWebOnly, builder: (_, __) => const GovernmentWebOnlyScreen()),
       ShellRoute(
         builder: (_, __, child) => AppShell(child: child),
         routes: [
           GoRoute(path: RouteNames.tenantDashboard, builder: (_, __) => const TenantDashboardScreen()),
           GoRoute(path: RouteNames.landlordDashboard, builder: (_, __) => const LandlordDashboardScreen()),
           GoRoute(path: RouteNames.agentDashboard, builder: (_, __) => const AgentDashboardScreen()),
-          GoRoute(path: RouteNames.adminDashboard, builder: (_, __) => const AdminDashboardScreen()),
           GoRoute(path: RouteNames.search, builder: (_, __) => const PropertySearchScreen()),
           GoRoute(
             path: '/listings/:id',
@@ -152,7 +110,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: RouteNames.submitMaintenance, builder: (_, __) => const SubmitMaintenanceScreen()),
           GoRoute(path: RouteNames.landlordProperties, builder: (_, __) => const LandlordPropertiesScreen()),
           GoRoute(path: RouteNames.settings, builder: (_, __) => const SettingsScreen()),
-          GoRoute(path: RouteNames.adminModeration, builder: (_, __) => const AdminModerationScreen()),
           GoRoute(path: RouteNames.messages, builder: (_, __) => const MessagesScreen()),
           GoRoute(
             path: '/messages/:threadId',
@@ -173,6 +130,83 @@ final routerProvider = Provider<GoRouter>((ref) {
     ),
   );
 });
+
+String? _authRedirect(AuthState auth, GoRouterState state) {
+  if (!auth.bootstrapped) return null;
+
+  final path = state.uri.path;
+  final uri = state.uri;
+  final user = auth.user;
+
+  if (!auth.isAuthenticated || user == null) {
+    if (_isShellRoute(path) || authGatePaths.contains(path)) {
+      return RouteNames.login;
+    }
+    if (!unauthenticatedAuthPaths.contains(path) && path != RouteNames.splash) {
+      return RouteNames.login;
+    }
+    return null;
+  }
+
+  final u = user;
+
+  if (path == RouteNames.forgotPassword || path == RouteNames.resetPassword) {
+    return null;
+  }
+
+  if (path == RouteNames.login) {
+    if (auth.onboardingFlowActive || isLoginOnboardingUri(uri)) {
+      return RouteNames.selectRole;
+    }
+    return postLoginDestination(u);
+  }
+
+  if (auth.onboardingFlowActive || isPostAuthOnboardingPath(path, uri)) {
+    if (path == RouteNames.register || path == RouteNames.verifyPhone) {
+      final em = Uri.encodeComponent(u.email);
+      return '${RouteNames.login}?email=$em&onboarding=1';
+    }
+    return null;
+  }
+
+  if (isAccountGated(u)) {
+    final dest = postLoginDestination(u);
+    final onGateScreen = authGatePaths.contains(path) || path.startsWith(RouteNames.kyc);
+    if (_isShellRoute(path) && !onGateScreen) return dest;
+  }
+
+  if ((u.role.startsWith('gov_') || u.role == 'system_admin') &&
+      path != RouteNames.governmentWebOnly) {
+    if (_isShellRoute(path) || isRoleDashboardPath(path)) {
+      return RouteNames.governmentWebOnly;
+    }
+  }
+
+  if (isRoleDashboardPath(path)) {
+    final expected = roleDashboardPath(u.role);
+    if (path != expected) {
+      return expected;
+    }
+  }
+
+  const preAuth = {
+    RouteNames.splash,
+    RouteNames.onboarding,
+    RouteNames.authEntry,
+    RouteNames.language,
+    RouteNames.login,
+    RouteNames.forgotPassword,
+    RouteNames.resetPassword,
+    RouteNames.register,
+    RouteNames.verifyPhone,
+  };
+
+  if (preAuth.contains(path) && path != RouteNames.splash && path != RouteNames.language) {
+    return postLoginDestination(u);
+  }
+
+  return null;
+}
 
 bool _isShellRoute(String path) {
   if (RouteNames.shellPaths.contains(path)) return true;

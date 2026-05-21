@@ -22,7 +22,7 @@ abstract class RouteNames {
   static const String tenantDashboard = '/tenant/dashboard';
   static const String landlordDashboard = '/landlord/dashboard';
   static const String agentDashboard = '/agent/dashboard';
-  static const String adminDashboard = '/admin/dashboard';
+  static const String governmentWebOnly = '/government-web-only';
   static const String dashboard = tenantDashboard;
 
   // Features (drawer + deep links)
@@ -34,7 +34,6 @@ abstract class RouteNames {
   static const String submitMaintenance = '/maintenance/submit';
   static const String landlordProperties = '/landlord/properties';
   static const String settings = '/settings';
-  static const String adminModeration = '/admin/moderation';
   static String listingDetail(int id) => '/listings/$id';
 
   // Main shell tabs
@@ -48,7 +47,7 @@ abstract class RouteNames {
     tenantDashboard,
     landlordDashboard,
     agentDashboard,
-    adminDashboard,
+    governmentWebOnly,
     messages,
     notifications,
     wallet,
@@ -61,6 +60,5 @@ abstract class RouteNames {
     submitMaintenance,
     landlordProperties,
     settings,
-    adminModeration,
   };
 }

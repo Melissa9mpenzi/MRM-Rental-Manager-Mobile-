@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/api/api_error.dart';
+import 'package:rental_mgr_mobile/core/config/api_config.dart';
+import 'package:rental_mgr_mobile/core/config/api_url_store.dart';
+import 'package:rental_mgr_mobile/features/auth/server_settings_sheet.dart';
+import 'package:rental_mgr_mobile/core/auth/auth_flow_prefs.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
@@ -11,6 +15,7 @@ import 'package:rental_mgr_mobile/core/widgets/auth_flow_stepper.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_hero_image.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_page_scaffold.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
+import 'package:rental_mgr_mobile/core/widgets/auth_password_field.dart';
 import 'package:rental_mgr_mobile/core/widgets/social_sign_in_buttons.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -47,17 +52,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     try {
-      await ref.read(authProvider.notifier).register(
+      final email = _email.text.trim();
+      final res = await ref.read(authProvider.notifier).register(
             fullName: _name.text.trim(),
-            email: _email.text.trim(),
+            email: email,
             phone: _phone.text.trim(),
             password: _password.text,
           );
       if (!mounted) return;
-      final email = Uri.encodeComponent(_email.text.trim());
-      context.push('${RouteNames.verifyPhone}?email=$email');
+      final devOtp = res['dev_verification_otp'];
+      if (devOtp != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Dev verification code: $devOtp')),
+        );
+      }
+      await AuthFlowPrefs.setSignupStep(step: AuthFlowPrefs.stepVerify, email: email);
+      context.go('${RouteNames.verifyPhone}?email=${Uri.encodeComponent(email)}');
     } catch (e) {
-      _snack(apiErrorMessage(e, 'Registration failed.'));
+      final base = ref.read(apiUrlProvider);
+      var msg = apiErrorMessage(e, 'Registration failed.');
+      if (ApiConfig.isInvalidHost(base)) msg = ApiConfig.misconfigurationHint(base);
+      _snack(msg);
     }
   }
 
@@ -80,7 +95,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () => context.go(RouteNames.onboarding),
                     icon: const Icon(Icons.arrow_back_ios_new_rounded),
                     color: AppColors.textOnDark,
                   ),
@@ -96,7 +111,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 'Uses the same API as the web app. You will verify your email next.',
                 style: AppTextStyles.bodyMediumOnDark.copyWith(color: AppColors.textMutedOnDark),
               ),
-              const SizedBox(height: 22),
+              TextButton(
+                onPressed: () => showServerSettingsSheet(context, ref),
+                child: Text(
+                  'Server settings (API connection)',
+                  style: AppTextStyles.bodySmallOnDark.copyWith(color: AppColors.accentGreen),
+                ),
+              ),
+              const SizedBox(height: 12),
               GlassPanel(
                 child: Column(
                   children: [
@@ -139,26 +161,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           (v == null || v.trim().length < 9) ? 'Enter a valid phone' : null,
                     ),
                     const SizedBox(height: 14),
-                    TextFormField(
+                    AuthPasswordField(
                       controller: _password,
-                      obscureText: true,
-                      style: AppTextStyles.bodyMediumOnDark,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: Icon(Icons.lock_outline_rounded),
-                      ),
                       validator: (v) =>
                           (v == null || v.length < 6) ? 'Min. 6 characters' : null,
                     ),
                     const SizedBox(height: 14),
-                    TextFormField(
+                    AuthPasswordField(
                       controller: _confirm,
-                      obscureText: true,
-                      style: AppTextStyles.bodyMediumOnDark,
-                      decoration: const InputDecoration(
-                        labelText: 'Confirm password',
-                        prefixIcon: Icon(Icons.lock_outline_rounded),
-                      ),
+                      labelText: 'Confirm password',
                       validator: (v) =>
                           v != _password.text ? 'Passwords do not match' : null,
                     ),
@@ -213,10 +224,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-              const SocialSignInButtons(onboarding: false),
+              const SocialSignInButtons(onboarding: true),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () => context.pop(),
+                onPressed: () => context.go(RouteNames.login),
                 child: Text(
                   'Already have an account? Sign in',
                   style: AppTextStyles.bodyMediumOnDark.copyWith(color: AppColors.accentGreen),

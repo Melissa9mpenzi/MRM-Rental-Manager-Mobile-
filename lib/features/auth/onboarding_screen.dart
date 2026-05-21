@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/constants/app_assets.dart';
+import 'package:rental_mgr_mobile/core/auth/auth_flow_prefs.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
@@ -52,8 +53,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (_index < _pages.length - 1) {
       _page.nextPage(duration: const Duration(milliseconds: 320), curve: Curves.easeOutCubic);
     } else {
+      AuthFlowPrefs.markOnboardingSeen();
       context.go(RouteNames.register);
     }
+  }
+
+  void _skip() {
+    AuthFlowPrefs.markOnboardingSeen();
+    context.go(RouteNames.login);
   }
 
   @override
@@ -68,7 +75,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 const Expanded(child: AuthFlowStepper(step: 2)),
                 TextButton(
-                  onPressed: () => context.go(RouteNames.login),
+                  onPressed: _skip,
                   child: Text('Skip', style: AppTextStyles.bodyMediumOnDark.copyWith(color: AppColors.textMutedOnDark)),
                 ),
               ],

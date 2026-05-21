@@ -1,25 +1,23 @@
-import 'dart:io' show Platform;
-
 import 'package:flutter/foundation.dart';
 
-/// Same backend as the web app (`VITE_API_URL` → `http://localhost:8000` by default).
-///
-/// Override at run time:
-/// `flutter run --dart-define=API_BASE_URL=http://192.168.1.10:8000`
+/// Legacy helpers; prefer [apiUrlProvider] for the live base URL.
 class ApiConfig {
-  static const String _envBase = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:8000',
-  );
+  static const _placeholderHosts = {'your_pc_ip', 'your-pc-ip'};
 
-  /// Resolves host for device/emulator (Android emulator → 10.0.2.2).
-  static String get baseUrl {
-    var url = _envBase;
-    if (!kIsWeb && Platform.isAndroid && url.contains('localhost')) {
-      url = url.replaceFirst('localhost', '10.0.2.2');
-    }
-    return url.replaceAll(RegExp(r'/+$'), '');
+  static bool isInvalidHost(String baseUrl) {
+    if (kIsWeb) return false;
+    final uri = Uri.tryParse(baseUrl);
+    if (uri == null || uri.host.isEmpty) return true;
+    final host = uri.host.toLowerCase();
+    if (_placeholderHosts.contains(host)) return true;
+    if (host.contains('your_pc') || host.contains('your-pc')) return true;
+    return false;
   }
 
-  static String get apiV1 => '$baseUrl/api/v1';
+  static String misconfigurationHint(String baseUrl) {
+    if (!isInvalidHost(baseUrl)) return '';
+    return 'Tap "Server settings" below and enter your PC Wi‑Fi IP from ipconfig, '
+        'e.g. http://192.168.1.2:8000\n'
+        'On PC run: uvicorn app.main:app --host 0.0.0.0 --port 8000';
+  }
 }

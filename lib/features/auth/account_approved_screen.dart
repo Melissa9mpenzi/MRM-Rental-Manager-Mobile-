@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
+import 'package:rental_mgr_mobile/core/auth/auth_flow_prefs.dart';
 import 'package:rental_mgr_mobile/core/auth/onboarding_navigation.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
@@ -48,7 +49,11 @@ class AccountApprovedScreen extends ConsumerWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => context.go(home),
+                    onPressed: () async {
+                      await ref.read(authProvider.notifier).endOnboardingFlow();
+                      await AuthFlowPrefs.markOnboardingSeen();
+                      if (context.mounted) context.go(home);
+                    },
                     child: const Text('Go to dashboard'),
                   ),
                 ),

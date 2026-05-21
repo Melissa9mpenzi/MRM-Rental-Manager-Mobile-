@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/api/api_error.dart';
+import 'package:rental_mgr_mobile/core/auth/auth_flow_prefs.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
@@ -44,8 +45,9 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
     try {
       await ref.read(authProvider.notifier).verifyEmail(email: _email.text, token: _otp);
       if (!mounted) return;
-      final em = Uri.encodeComponent(_email.text.trim());
-      context.go('${RouteNames.login}?email=$em&onboarding=1');
+      final em = _email.text.trim();
+      await AuthFlowPrefs.setSignupStep(step: AuthFlowPrefs.stepLogin, email: em);
+      context.go('${RouteNames.login}?email=${Uri.encodeComponent(em)}&onboarding=1');
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(apiErrorMessage(e))));
     }
@@ -60,12 +62,21 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () => context.go(RouteNames.register),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                  color: AppColors.textOnDark,
+                ),
+              ],
+            ),
             const AuthFlowStepper(step: 4),
-            const SizedBox(height: 20),
-            Text('Verify your phone', style: AppTextStyles.displayHero.copyWith(fontSize: 24)),
+            const SizedBox(height: 12),
+            Text('Verify your email', style: AppTextStyles.displayHero.copyWith(fontSize: 24)),
             const SizedBox(height: 8),
             Text(
-              'Enter the 6-digit code sent to your email (SMS when enabled on server).',
+              'Enter the 6-digit code we sent to your email. In development, the code may also appear in the API console or a snackbar after register.',
               style: AppTextStyles.bodyMediumOnDark.copyWith(color: AppColors.textMutedOnDark),
             ),
             const SizedBox(height: 28),
@@ -86,7 +97,7 @@ class _VerifyPhoneScreenState extends ConsumerState<VerifyPhoneScreen> {
                       onPressed: loading ? null : _verify,
                       child: loading
                           ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Text('Verify'),
+                          : const Text('Continue'),
                     ),
                   ),
                 ],

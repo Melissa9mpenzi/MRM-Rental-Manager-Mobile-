@@ -4,6 +4,7 @@ import 'package:rental_mgr_mobile/core/api/api_client.dart';
 import 'package:rental_mgr_mobile/core/api/api_error.dart';
 import 'package:rental_mgr_mobile/core/api/auth_api.dart';
 import 'package:rental_mgr_mobile/core/api/users_api.dart';
+import 'package:rental_mgr_mobile/core/auth/auth_flow_prefs.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_session.dart';
 import 'package:rental_mgr_mobile/core/models/app_user.dart';
 
@@ -13,24 +14,29 @@ class AuthState {
     this.isAuthenticated = false,
     this.isLoading = false,
     this.bootstrapped = false,
+    this.onboardingFlowActive = false,
   });
 
   final AppUser? user;
   final bool isAuthenticated;
   final bool isLoading;
   final bool bootstrapped;
+  /// True while user completes register → verify → login → role/KYC after first sign-in.
+  final bool onboardingFlowActive;
 
   AuthState copyWith({
     AppUser? user,
     bool? isAuthenticated,
     bool? isLoading,
     bool? bootstrapped,
+    bool? onboardingFlowActive,
   }) {
     return AuthState(
       user: user ?? this.user,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       isLoading: isLoading ?? this.isLoading,
       bootstrapped: bootstrapped ?? this.bootstrapped,
+      onboardingFlowActive: onboardingFlowActive ?? this.onboardingFlowActive,
     );
   }
 }
@@ -51,22 +57,44 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final UsersApi _usersApi;
 
   Future<void> bootstrap() async {
+    final onboardingActive = await AuthFlowPrefs.isOnboardingFlowActive();
     final token = await _session.accessToken;
     if (token == null || token.isEmpty) {
-      state = state.copyWith(bootstrapped: true, isAuthenticated: false, user: null);
+      state = state.copyWith(
+        bootstrapped: true,
+        isAuthenticated: false,
+        user: null,
+        onboardingFlowActive: onboardingActive,
+      );
       return;
     }
     try {
       final user = await _authApi.me();
       await _session.saveUser(user);
-      state = AuthState(user: user, isAuthenticated: true, bootstrapped: true);
+      state = AuthState(
+        user: user,
+        isAuthenticated: true,
+        bootstrapped: true,
+        onboardingFlowActive: onboardingActive,
+      );
     } catch (_) {
       await _session.clear();
-      state = const AuthState(bootstrapped: true);
+      state = AuthState(bootstrapped: true, onboardingFlowActive: onboardingActive);
     }
   }
 
-  Future<void> register({
+  Future<void> beginOnboardingFlow() async {
+    await AuthFlowPrefs.setOnboardingFlowActive(true);
+    state = state.copyWith(onboardingFlowActive: true);
+  }
+
+  Future<void> endOnboardingFlow() async {
+    await AuthFlowPrefs.setOnboardingFlowActive(false);
+    await AuthFlowPrefs.clearSignupProgress();
+    state = state.copyWith(onboardingFlowActive: false);
+  }
+
+  Future<Map<String, dynamic>> register({
     required String fullName,
     required String email,
     required String phone,
@@ -75,7 +103,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true);
     try {
-      await _authApi.register(
+      return await _authApi.register(
         fullName: fullName,
         email: email.trim(),
         phone: phone,
@@ -97,6 +125,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<AppUser> login({required String email, required String password}) async {
+    final keepOnboarding =
+        state.onboardingFlowActive || await AuthFlowPrefs.isOnboardingFlowActive();
     state = state.copyWith(isLoading: true);
     try {
       final result = await _authApi.login(email: email.trim(), password: password);
@@ -109,12 +139,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: result.user,
         isAuthenticated: true,
         bootstrapped: true,
+        onboardingFlowActive: keepOnboarding,
       );
       return result.user;
     } catch (e) {
+      state = state.copyWith(isLoading: false, isAuthenticated: false, user: null);
       throw Exception(apiErrorMessage(e, 'Login failed. Check your credentials.'));
     } finally {
-      state = state.copyWith(isLoading: false);
+      if (state.isLoading) {
+        state = state.copyWith(isLoading: false);
+      }
     }
   }
 
@@ -225,6 +259,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> logout() async {
     await _authApi.logout();
     await _session.clear();
-    state = const AuthState(bootstrapped: true);
+    state = const AuthState(bootstrapped: true, onboardingFlowActive: false);
   }
 }
