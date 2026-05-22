@@ -15,10 +15,14 @@ String resolveApiBaseUrl(String url) {
   return u;
 }
 
+/// Production backend (Vercel). Override with --dart-define=API_BASE_URL=... when building.
+const productionApiBaseUrl = 'https://mrm-rental-manager-backend.vercel.app';
+
 String _defaultFromEnvironment() {
   const env = String.fromEnvironment('API_BASE_URL');
   if (env.isNotEmpty) return env;
-  // Physical phone cannot use localhost — common dev LAN IP (change in Server settings).
+  if (kIsWeb) return productionApiBaseUrl;
+  // Physical phone cannot use localhost — set your PC IP in Server settings.
   if (!kIsWeb && Platform.isAndroid) {
     return 'http://192.168.1.2:8000';
   }
