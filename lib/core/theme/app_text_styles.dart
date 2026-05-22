@@ -83,6 +83,8 @@ abstract class AppTextStyles {
         color: AppColors.textOnDark,
       );
 
+  static TextStyle get titleOnDark => headingMedium;
+
   static TextStyle get captionOnDark => caption.copyWith(
         color: AppColors.textMutedOnDark,
       );

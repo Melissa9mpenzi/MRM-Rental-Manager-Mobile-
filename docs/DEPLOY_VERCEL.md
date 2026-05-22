@@ -17,6 +17,12 @@ Override with Vercel env `API_BASE_URL` or `--dart-define=API_BASE_URL=...`.
 3. Build uses `scripts/vercel-build-web.sh` (installs Flutter on the builder if needed).
 4. Output: `build/web`
 
+### Build log notes
+
+- **`Woah! You appear to be trying to run flutter as root`** — normal on Vercel; safe to ignore if the build continues.
+- **`33 packages have newer versions`** — informational only; the build uses `pubspec.lock`.
+- If the build fails with a Dart **compile error**, fix it locally with `flutter build web --release` then push.
+
 ## Local web build
 
 ```bash
