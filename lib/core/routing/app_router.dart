@@ -31,7 +31,8 @@ import 'package:rental_mgr_mobile/features/landlord/landlord_properties_screen.d
 import 'package:rental_mgr_mobile/features/maintenance/maintenance_screen.dart';
 import 'package:rental_mgr_mobile/features/maintenance/submit_maintenance_screen.dart';
 import 'package:rental_mgr_mobile/features/marketplace/property_detail_screen.dart';
-import 'package:rental_mgr_mobile/features/marketplace/property_search_screen.dart';
+import 'package:rental_mgr_mobile/features/receipts/receipts_list_screen.dart';
+import 'package:rental_mgr_mobile/features/receipts/system_receipt_detail_screen.dart';
 import 'package:rental_mgr_mobile/features/messages/message_thread_screen.dart';
 import 'package:rental_mgr_mobile/features/messages/messages_screen.dart';
 import 'package:rental_mgr_mobile/features/profile/settings_screen.dart';
@@ -41,6 +42,12 @@ import 'package:rental_mgr_mobile/features/tenant/saved_listings_screen.dart';
 import 'package:rental_mgr_mobile/features/notifications/notifications_screen.dart';
 import 'package:rental_mgr_mobile/features/profile/profile_screen.dart';
 import 'package:rental_mgr_mobile/features/wallet/wallet_screen.dart';
+import 'package:rental_mgr_mobile/features/sui/sui_shell.dart';
+import 'package:rental_mgr_mobile/features/sui/sui_dashboard_screen.dart';
+import 'package:rental_mgr_mobile/features/sui/sui_transactions_screen.dart';
+import 'package:rental_mgr_mobile/features/sui/sui_escrow_screen.dart';
+import 'package:rental_mgr_mobile/features/sui/sui_wallet_screen.dart';
+import 'package:rental_mgr_mobile/features/sui/sui_receipt_screen.dart';
 import 'package:rental_mgr_mobile/language_selection_screen.dart';
 
 /// Do not [ref.watch] auth here — that recreates [GoRouter] on every login and breaks navigation.
@@ -93,6 +100,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: RouteNames.accountApproved, builder: (_, __) => const AccountApprovedScreen()),
       GoRoute(path: RouteNames.governmentWebOnly, builder: (_, __) => const GovernmentWebOnlyScreen()),
       ShellRoute(
+        builder: (_, __, child) => SuiShell(child: child),
+        routes: [
+          GoRoute(path: RouteNames.suiDashboard, builder: (_, __) => const SuiDashboardScreen()),
+          GoRoute(path: RouteNames.suiTransactions, builder: (_, __) => const SuiTransactionsScreen()),
+          GoRoute(path: RouteNames.suiEscrow, builder: (_, __) => const SuiEscrowScreen()),
+          GoRoute(path: RouteNames.suiWallet, builder: (_, __) => const SuiWalletScreen()),
+          GoRoute(
+            path: '/sui/receipts/:id',
+            builder: (_, state) => SuiReceiptScreen(receiptId: int.parse(state.pathParameters['id']!)),
+          ),
+        ],
+      ),
+      ShellRoute(
         builder: (_, __, child) => AppShell(child: child),
         routes: [
           GoRoute(path: RouteNames.tenantDashboard, builder: (_, __) => const TenantDashboardScreen()),
@@ -117,6 +137,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(path: RouteNames.notifications, builder: (_, __) => const NotificationsScreen()),
           GoRoute(path: RouteNames.wallet, builder: (_, __) => const WalletScreen()),
+          GoRoute(path: RouteNames.receipts, builder: (_, __) => const ReceiptsListScreen()),
+          GoRoute(
+            path: '/receipts/:id',
+            builder: (_, state) => SystemReceiptDetailScreen(receiptId: int.parse(state.pathParameters['id']!)),
+          ),
           GoRoute(path: RouteNames.profile, builder: (_, __) => const ProfileScreen()),
         ],
       ),
@@ -189,6 +214,7 @@ String? _authRedirect(AuthState auth, GoRouterState state) {
     }
   }
 
+
   const preAuth = {
     RouteNames.splash,
     RouteNames.onboarding,
@@ -210,6 +236,8 @@ String? _authRedirect(AuthState auth, GoRouterState state) {
 
 bool _isShellRoute(String path) {
   if (RouteNames.shellPaths.contains(path)) return true;
+  if (RouteNames.suiShellPaths.contains(path) || path.startsWith('/sui/receipts/')) return true;
+  if (path == RouteNames.receipts || path.startsWith('/receipts/')) return true;
   if (path.startsWith('/listings/')) return true;
   if (path.startsWith('/messages/') && path != RouteNames.messages) return true;
   return false;

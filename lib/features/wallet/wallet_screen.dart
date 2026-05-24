@@ -101,6 +101,11 @@ class WalletScreen extends ConsumerWidget {
                               icon: const Icon(Icons.payments_outlined, size: 18),
                               label: const Text('Pay rent'),
                             ),
+                          OutlinedButton.icon(
+                            onPressed: () => context.push(RouteNames.receipts),
+                            icon: const Icon(Icons.receipt_long_outlined, size: 18),
+                            label: const Text('Receipts'),
+                          ),
                           OutlinedButton(
                             onPressed: () => _showWalletActionsInfo(context, role),
                             child: const Text('Top up / Send / Withdraw'),

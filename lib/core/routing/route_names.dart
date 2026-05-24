@@ -41,7 +41,23 @@ abstract class RouteNames {
   static const String notifications = '/notifications';
   static const String wallet = '/wallet';
   static const String profile = '/profile';
-  static String messageThread(int id) => '/messages/$id';
+
+  // Sui blockchain portal
+  static const String suiDashboard = '/sui/dashboard';
+  static const String suiTransactions = '/sui/transactions';
+  static const String suiEscrow = '/sui/escrow';
+  static const String suiWallet = '/sui/wallet';
+  static String suiReceipt(int id) => '/sui/receipts/$id';
+
+  static const String receipts = '/receipts';
+  static String receiptDetail(int id) => '/receipts/$id';
+
+  static const Set<String> suiShellPaths = {
+    suiDashboard,
+    suiTransactions,
+    suiEscrow,
+    suiWallet,
+  };
 
   static const Set<String> shellPaths = {
     tenantDashboard,
@@ -60,5 +76,6 @@ abstract class RouteNames {
     submitMaintenance,
     landlordProperties,
     settings,
+    receipts,
   };
 }

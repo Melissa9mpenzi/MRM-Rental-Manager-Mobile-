@@ -35,6 +35,8 @@ List<DrawerMenuItem> drawerItemsForRole(String role) {
     DrawerMenuItem(label: 'Messages', icon: Icons.chat_bubble_outline, route: RouteNames.messages),
     DrawerMenuItem(label: 'Notifications', icon: Icons.notifications_outlined, route: RouteNames.notifications),
     DrawerMenuItem(label: 'Wallet', icon: Icons.account_balance_wallet_outlined, route: RouteNames.wallet),
+    const DrawerMenuItem(label: 'Receipts', icon: Icons.receipt_long_outlined, route: RouteNames.receipts),
+    const DrawerMenuItem(label: 'Sui Portal', icon: Icons.token_outlined, route: RouteNames.suiDashboard),
     DrawerMenuItem(label: 'Profile', icon: Icons.person_outline, route: RouteNames.profile),
     DrawerMenuItem(label: 'Settings', icon: Icons.settings_outlined, route: RouteNames.settings),
   ];

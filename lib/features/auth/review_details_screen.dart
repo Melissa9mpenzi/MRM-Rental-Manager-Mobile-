@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
 import 'package:rental_mgr_mobile/core/auth/kyc_draft_provider.dart';
+import 'package:rental_mgr_mobile/core/kyc/kyc_validator.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
@@ -59,6 +60,18 @@ class ReviewDetailsScreen extends ConsumerWidget {
                     ? null
                     : () async {
                         try {
+                          for (final entry in [
+                            (draft.idFront, KycKind.idFront, 'ID front'),
+                            (draft.idBack, KycKind.idBack, 'ID back'),
+                            (draft.selfie, KycKind.selfie, 'Selfie'),
+                          ]) {
+                            final file = entry.$1;
+                            if (file == null) {
+                              throw Exception('Add ${entry.$3} before submitting.');
+                            }
+                            final err = await validateKycFile(file, entry.$2);
+                            if (err != null) throw Exception(err);
+                          }
                           final idFront = await MultipartFile.fromFile(draft.idFront!.path, filename: 'id_front.jpg');
                           final idBack = await MultipartFile.fromFile(draft.idBack!.path, filename: 'id_back.jpg');
                           final selfie = await MultipartFile.fromFile(draft.selfie!.path, filename: 'selfie.jpg');

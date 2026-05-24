@@ -5,7 +5,7 @@ enum AppPaymentMethod {
   visa('other', 'Visa / Card', 'visa'),
   bank('bank', 'Bank transfer', 'bank'),
   cash('cash', 'Cash', 'cash'),
-  sui('other', 'Sui Wallet', 'sui'),
+  sui('sui', 'Sui Wallet', 'sui'),
   other('other', 'Other', 'other');
 
   const AppPaymentMethod(this.apiValue, this.label, this.logoAsset);
@@ -32,11 +32,12 @@ enum AppPaymentMethod {
     };
   }
 
-  /// Tenant checkout: MoMo + Pesapal (card). Blockchain (sui) — phase 3.
+  /// Tenant checkout: MoMo + Pesapal + Sui wallet (hybrid Web3).
   static const tenantCheckout = [
     AppPaymentMethod.mtnMomo,
     AppPaymentMethod.airtel,
     AppPaymentMethod.visa,
+    AppPaymentMethod.sui,
   ];
 
   /// Landlord record-payment options.

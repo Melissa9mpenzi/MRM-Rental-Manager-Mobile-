@@ -11,7 +11,7 @@ String apiMethodFromApp(AppPaymentMethod method) {
     AppPaymentMethod.mtnMomo => 'mtn_momo',
     AppPaymentMethod.airtel => 'airtel',
     AppPaymentMethod.visa => 'other',
-    AppPaymentMethod.sui => 'other',
+    AppPaymentMethod.sui => 'sui',
     AppPaymentMethod.bank => 'bank',
     AppPaymentMethod.cash => 'cash',
     AppPaymentMethod.other => 'other',
@@ -51,6 +51,10 @@ Future<void> runTenantCheckoutFlow({
     final gw = await ref.read(paymentsApiProvider).gatewayStatus();
     final supports = gw['supports'] as Map<String, dynamic>? ?? {};
     final methodApi = apiMethodFromApp(method);
+    if (methodApi == 'sui') {
+      _snack(context, 'Sui wallet payments: use the web app at Pay rent to connect your wallet.');
+      return;
+    }
     if (methodApi == 'airtel' && supports['airtel'] != true) {
       _snack(context, 'Airtel needs Pesapal on the server. Use MTN MoMo or ask your landlord.');
       return;
