@@ -31,6 +31,7 @@ import 'package:rental_mgr_mobile/features/landlord/landlord_properties_screen.d
 import 'package:rental_mgr_mobile/features/maintenance/maintenance_screen.dart';
 import 'package:rental_mgr_mobile/features/maintenance/submit_maintenance_screen.dart';
 import 'package:rental_mgr_mobile/features/marketplace/property_detail_screen.dart';
+import 'package:rental_mgr_mobile/features/marketplace/property_search_screen.dart';
 import 'package:rental_mgr_mobile/features/receipts/receipts_list_screen.dart';
 import 'package:rental_mgr_mobile/features/receipts/system_receipt_detail_screen.dart';
 import 'package:rental_mgr_mobile/features/messages/message_thread_screen.dart';

@@ -38,6 +38,7 @@ abstract class RouteNames {
 
   // Main shell tabs
   static const String messages = '/messages';
+  static String messageThread(int threadId) => '/messages/$threadId';
   static const String notifications = '/notifications';
   static const String wallet = '/wallet';
   static const String profile = '/profile';
