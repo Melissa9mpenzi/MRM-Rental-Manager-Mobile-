@@ -146,7 +146,7 @@ class TenantDashboardScreen extends ConsumerWidget {
                 QuickActionChip(icon: Icons.payments_outlined, label: 'Pay rent', onTap: () => context.push(RouteNames.payRent)),
                 QuickActionChip(icon: Icons.description_outlined, label: 'My contracts', onTap: () => context.push(RouteNames.contracts)),
                 QuickActionChip(icon: Icons.account_balance_wallet_outlined, label: 'Wallet', onTap: () => context.push(RouteNames.wallet)),
-                QuickActionChip(icon: Icons.chat_bubble_outline_rounded, label: 'Messages', onTap: () => context.push(RouteNames.messages)),
+                QuickActionChip(icon: Icons.chat_bubble_outline_rounded, label: 'Rental Hub', onTap: () => context.push(RouteNames.messages)),
               ],
             ),
             const SizedBox(height: 24),

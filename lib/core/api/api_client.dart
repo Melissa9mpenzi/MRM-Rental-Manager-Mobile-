@@ -7,7 +7,8 @@ final authSessionProvider = Provider<AuthSession>((ref) => AuthSession());
 
 final dioProvider = Provider<Dio>((ref) {
   final session = ref.watch(authSessionProvider);
-  final apiV1 = ref.watch(apiUrlProvider.notifier).apiV1;
+  final base = ref.watch(apiUrlProvider);
+  final apiV1 = '$base/api/v1';
   return createDio(session, apiV1);
 });
 
@@ -65,6 +66,12 @@ Dio createDio(AuthSession session, String apiV1Base) {
               final newToken = body is Map<String, dynamic> ? body['access_token'] as String? : null;
               if (newToken != null) {
                 await session.saveAccessToken(newToken);
+                final newRefresh = body is Map<String, dynamic>
+                    ? body['refresh_token'] as String?
+                    : null;
+                if (newRefresh != null && newRefresh.isNotEmpty) {
+                  await session.saveRefreshToken(newRefresh);
+                }
                 req.headers['Authorization'] = 'Bearer $newToken';
                 final clone = await dio.fetch(req);
                 return handler.resolve(clone);

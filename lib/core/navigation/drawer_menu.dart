@@ -32,7 +32,7 @@ List<DrawerMenuItem> drawerItemsForRole(String role) {
 
   final common = [
     DrawerMenuItem(label: 'Home', icon: Icons.dashboard_outlined, route: home),
-    DrawerMenuItem(label: 'Messages', icon: Icons.chat_bubble_outline, route: RouteNames.messages),
+    DrawerMenuItem(label: 'Rental Hub', icon: Icons.chat_bubble_outline, route: RouteNames.messages),
     DrawerMenuItem(label: 'Notifications', icon: Icons.notifications_outlined, route: RouteNames.notifications),
     DrawerMenuItem(label: 'Wallet', icon: Icons.account_balance_wallet_outlined, route: RouteNames.wallet),
     const DrawerMenuItem(label: 'Receipts', icon: Icons.receipt_long_outlined, route: RouteNames.receipts),

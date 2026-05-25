@@ -31,10 +31,24 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/images/rentdirect-logo.png
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: assets/images/rentdirect-logo.png
+  web:
+    generate: true
+    image_path: assets/images/rentdirect-logo.png
+    background_color: "#000000"
+    theme_color: "#10B981"
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/rentdirect-logo.png
     - assets/images/hero-villa.jpg
     - assets/images/listing-luxury.jpg
     - assets/images/listing-interior.jpg

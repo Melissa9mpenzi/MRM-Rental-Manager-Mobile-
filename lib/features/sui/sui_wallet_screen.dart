@@ -31,9 +31,29 @@ class SuiWalletScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Expanded(child: FilledButton(onPressed: () {}, child: const Text('Send'))),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Send: link your Sui wallet on the web app, or pay rent with MoMo here.'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          ),
+                          child: const Text('Send'),
+                        ),
+                      ),
                       const SizedBox(width: 8),
-                      Expanded(child: OutlinedButton(onPressed: () {}, child: const Text('Receive'))),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Receive: share your wallet address from the web Sui portal.'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          ),
+                          child: const Text('Receive'),
+                        ),
+                      ),
                     ],
                   ),
                 ],

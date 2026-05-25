@@ -51,7 +51,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> with SingleTick
     final favoriteIds = ref.watch(favoriteThreadIdsProvider);
 
     return PageScaffold(
-      title: 'Messages',
+      title: 'Rental Hub',
       body: Column(
         children: [
           TabBar(
@@ -192,7 +192,7 @@ class _ThreadList extends StatelessWidget {
                             children: [
                               Text(title.toString(), style: AppTextStyles.bodyMediumOnDark),
                               Text(
-                                '${t['last_message_preview'] ?? t['preview'] ?? ''}',
+                                '${t['last_preview'] ?? t['last_message_preview'] ?? t['preview'] ?? ''}',
                                 style: AppTextStyles.captionOnDark,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

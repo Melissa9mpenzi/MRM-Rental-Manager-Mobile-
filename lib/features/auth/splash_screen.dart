@@ -71,7 +71,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const BrandLogo(size: 96, showTagline: true),
+                const BrandLogo(height: 96, showTagline: true),
                 const SizedBox(height: 40),
                 const SizedBox(
                   width: 28,

@@ -9,19 +9,24 @@ class ReceiptsApi {
   Future<List<dynamic>> list({int limit = 50}) async {
     final r = await _dio.get('/receipts', queryParameters: {'limit': limit});
     final data = r.data;
-    if (data is Map && data['data'] is List) return List<dynamic>.from(data['data'] as List);
     if (data is List) return data;
     return [];
   }
 
   Future<Map<String, dynamic>> get(int id) async {
     final r = await _dio.get('/receipts/$id');
-    return Map<String, dynamic>.from(r.data['data'] as Map? ?? r.data as Map? ?? {});
+    final data = r.data;
+    if (data is Map<String, dynamic>) return data;
+    if (data is Map) return Map<String, dynamic>.from(data);
+    return {};
   }
 
   Future<Map<String, dynamic>> verify(String token) async {
     final r = await _dio.get('/receipts/verify/$token');
-    return Map<String, dynamic>.from(r.data['data'] as Map? ?? {});
+    final data = r.data;
+    if (data is Map<String, dynamic>) return data;
+    if (data is Map) return Map<String, dynamic>.from(data);
+    return {};
   }
 
   String pdfPath(int id) => '/receipts/$id/pdf';

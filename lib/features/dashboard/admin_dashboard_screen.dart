@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
 import 'package:rental_mgr_mobile/core/providers/dashboard_providers.dart';
-import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/utils/format_ugx.dart';
@@ -25,8 +23,15 @@ class AdminDashboardScreen extends ConsumerWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.verified_user_outlined),
-          tooltip: 'KYC moderation',
-          onPressed: () => context.push(RouteNames.adminModeration),
+          tooltip: 'KYC moderation (web)',
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('NIRA KYC moderation runs on the government web portal.'),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          },
         ),
       ],
       body: RefreshIndicator(

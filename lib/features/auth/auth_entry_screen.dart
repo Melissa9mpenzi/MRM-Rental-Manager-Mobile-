@@ -4,6 +4,7 @@ import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_page_scaffold.dart';
+import 'package:rental_mgr_mobile/core/widgets/brand_logo.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
 
 /// Step 3 in spec: user chooses Login or Create Account.
@@ -19,8 +20,10 @@ class AuthEntryScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Spacer(),
+            const BrandLogo(height: 72),
+            const SizedBox(height: 20),
             Text(
-              'Welcome to RentDirect UG',
+              'Welcome',
               style: AppTextStyles.displayHero.copyWith(fontSize: 28),
               textAlign: TextAlign.center,
             ),

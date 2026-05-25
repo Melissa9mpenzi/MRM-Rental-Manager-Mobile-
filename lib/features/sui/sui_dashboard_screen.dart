@@ -96,10 +96,21 @@ class SuiDashboardScreen extends ConsumerWidget {
     );
   }
 
+  void _walletHint(BuildContext context, String action) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '$action uses a linked Sui wallet — connect on the web Sui portal or pay rent with MoMo in this app.',
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   Widget _actionBtn(BuildContext context, String label, IconData icon) {
     return Expanded(
       child: OutlinedButton.icon(
-        onPressed: () {},
+        onPressed: () => _walletHint(context, label),
         icon: Icon(icon, size: 16),
         label: Text(label, style: const TextStyle(fontSize: 12)),
         style: OutlinedButton.styleFrom(

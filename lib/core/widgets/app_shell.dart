@@ -30,7 +30,7 @@ class AppShell extends ConsumerWidget {
       RouteNames.wallet,
       RouteNames.profile,
     ];
-    final labels = ['Home', 'Messages', 'Alerts', 'Wallet', 'Profile'];
+    final labels = ['Home', 'Rental Hub', 'Alerts', 'Wallet', 'Profile'];
     final icons = [
       Icons.dashboard_outlined,
       Icons.chat_bubble_outline_rounded,

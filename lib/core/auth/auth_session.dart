@@ -40,6 +40,10 @@ class AuthSession {
     await _storage.write(key: _kAccess, value: token);
   }
 
+  Future<void> saveRefreshToken(String token) async {
+    await _storage.write(key: _kRefresh, value: token);
+  }
+
   Future<void> clear() async {
     await _storage.delete(key: _kAccess);
     await _storage.delete(key: _kRefresh);

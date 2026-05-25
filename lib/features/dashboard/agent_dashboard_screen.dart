@@ -146,7 +146,7 @@ class AgentDashboardScreen extends ConsumerWidget {
               childAspectRatio: 1.4,
               children: [
                 QuickActionChip(icon: Icons.search_rounded, label: 'Browse listings', onTap: () => context.push(RouteNames.search)),
-                QuickActionChip(icon: Icons.chat_bubble_outline_rounded, label: 'Messages', onTap: () => context.push(RouteNames.messages)),
+                QuickActionChip(icon: Icons.chat_bubble_outline_rounded, label: 'Rental Hub', onTap: () => context.push(RouteNames.messages)),
                 QuickActionChip(icon: Icons.build_outlined, label: 'Maintenance', onTap: () => context.push(RouteNames.maintenance)),
                 QuickActionChip(icon: Icons.account_balance_wallet_outlined, label: 'Wallet', onTap: () => context.push(RouteNames.wallet)),
               ],

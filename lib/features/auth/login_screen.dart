@@ -11,6 +11,7 @@ import 'package:rental_mgr_mobile/features/auth/server_settings_sheet.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
+import 'package:rental_mgr_mobile/core/widgets/brand_logo.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_page_scaffold.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
 import 'package:rental_mgr_mobile/core/widgets/auth_password_field.dart';
@@ -82,6 +83,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const Center(child: BrandLogo(height: 56)),
+              const SizedBox(height: 16),
               if (widget.onboarding)
                 Row(
                   children: [

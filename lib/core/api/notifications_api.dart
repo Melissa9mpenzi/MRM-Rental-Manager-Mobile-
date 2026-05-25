@@ -17,8 +17,12 @@ class NotificationsApi {
   }
 
   Future<int> unreadCount() async {
-    final res = await _dio.get<Map<String, dynamic>>('/notifications/unread-count');
-    return (res.data?['count'] as num?)?.toInt() ?? 0;
+    final res = await _dio.get<dynamic>('/notifications/unread-count');
+    final data = res.data;
+    if (data is Map) {
+      return (data['count'] as num?)?.toInt() ?? 0;
+    }
+    return 0;
   }
 
   Future<void> markRead(int id) async {

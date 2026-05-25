@@ -2,13 +2,20 @@
 
 Project: https://mrm-rental-manager-mobile.vercel.app
 
-## API
+## API & Sui testnet
 
 The web build points at:
 
 `https://mrm-rental-manager-backend.vercel.app`
 
-Override with Vercel env `API_BASE_URL` or `--dart-define=API_BASE_URL=...`.
+| Vercel env | Default | Purpose |
+|------------|---------|---------|
+| `API_BASE_URL` | production backend URL | REST API |
+| `SUI_NETWORK` | `testnet` | Sui portal label + build define |
+| `SUI_RPC_URL` | `https://fullnode.testnet.sui.io:443` | Optional explicit RPC |
+| `SUI_EXPLORER_BASE` | `https://suiscan.xyz/testnet` | Tx links |
+
+Override with Vercel env vars or `--dart-define=...` on local builds.
 
 ## First deploy
 
@@ -26,7 +33,17 @@ Override with Vercel env `API_BASE_URL` or `--dart-define=API_BASE_URL=...`.
 ## Local web build
 
 ```bash
-flutter build web --release --dart-define=API_BASE_URL=https://mrm-rental-manager-backend.vercel.app
+flutter build web --release \
+  --dart-define=API_BASE_URL=https://mrm-rental-manager-backend.vercel.app \
+  --dart-define=SUI_NETWORK=testnet
+```
+
+Android APK (production API + testnet):
+
+```bash
+flutter build apk --release \
+  --dart-define=API_BASE_URL=https://mrm-rental-manager-backend.vercel.app \
+  --dart-define=SUI_NETWORK=testnet
 ```
 
 Serve `build/web` with any static host.

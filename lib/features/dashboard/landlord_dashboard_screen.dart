@@ -194,7 +194,7 @@ class LandlordDashboardScreen extends ConsumerWidget {
                 QuickActionChip(icon: Icons.apartment_outlined, label: 'Properties', onTap: () => context.push(RouteNames.landlordProperties)),
                 QuickActionChip(icon: Icons.build_outlined, label: 'Maintenance', onTap: () => context.push(RouteNames.maintenance)),
                 QuickActionChip(icon: Icons.payments_outlined, label: 'Wallet', onTap: () => context.push(RouteNames.wallet)),
-                QuickActionChip(icon: Icons.chat_bubble_outline_rounded, label: 'Messages', onTap: () => context.push(RouteNames.messages)),
+                QuickActionChip(icon: Icons.chat_bubble_outline_rounded, label: 'Rental Hub', onTap: () => context.push(RouteNames.messages)),
               ],
             ),
           ],
