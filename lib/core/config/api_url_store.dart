@@ -21,6 +21,8 @@ const productionApiBaseUrl = 'https://mrm-rental-manager-backend.vercel.app';
 String _defaultFromEnvironment() {
   const env = String.fromEnvironment('API_BASE_URL');
   if (env.isNotEmpty) return env;
+  // Never default to localhost in production/release builds.
+  if (kReleaseMode) return productionApiBaseUrl;
   if (kIsWeb) return productionApiBaseUrl;
   // Physical phone cannot use localhost — set your PC IP in Server settings.
   if (!kIsWeb && Platform.isAndroid) {
