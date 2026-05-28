@@ -6,6 +6,8 @@ import 'package:rental_mgr_mobile/core/payments/payment_method_config.dart';
 import 'package:rental_mgr_mobile/core/widgets/payment_method_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+const _webSuiPayUrl = 'https://mrm-rental-manager-frontend-pink.vercel.app/tenant/pay';
+
 String apiMethodFromApp(AppPaymentMethod method) {
   return switch (method) {
     AppPaymentMethod.mtnMomo => 'mtn_momo',
@@ -52,7 +54,7 @@ Future<void> runTenantCheckoutFlow({
     final supports = gw['supports'] as Map<String, dynamic>? ?? {};
     final methodApi = apiMethodFromApp(method);
     if (methodApi == 'sui') {
-      _snack(context, 'Sui wallet payments: use the web app at Pay rent to connect your wallet.');
+      await _openWebSuiPay(context);
       return;
     }
     if (methodApi == 'airtel' && supports['airtel'] != true) {
@@ -148,4 +150,30 @@ void _snack(BuildContext context, String msg, {bool long = false}) {
       duration: Duration(seconds: long ? 6 : 4),
     ),
   );
+}
+
+Future<void> _openWebSuiPay(BuildContext context) async {
+  final open = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Sui wallet payment'),
+      content: const Text(
+        'Sui wallet signing is currently available on the web app. Open the secure web pay page now?',
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Not now')),
+        FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Open web pay')),
+      ],
+    ),
+  );
+
+  if (open != true || !context.mounted) return;
+
+  final uri = Uri.parse(_webSuiPayUrl);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+    _snack(context, 'Opened web pay page for Sui wallet checkout.');
+  } else {
+    _snack(context, 'Could not open web pay page. Open $_webSuiPayUrl manually.');
+  }
 }
