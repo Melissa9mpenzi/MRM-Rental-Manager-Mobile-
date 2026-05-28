@@ -7,6 +7,7 @@ import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/widgets/app_drawer.dart';
+import 'package:rental_mgr_mobile/features/notifications/notifications_screen.dart';
 
 final shellScaffoldKeyProvider = Provider<GlobalKey<ScaffoldState>>((ref) => GlobalKey<ScaffoldState>());
 
@@ -17,6 +18,8 @@ class AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(notificationPollProvider);
+    final unreadCount = ref.watch(unreadNotificationsCountProvider).valueOrNull ?? 0;
     final shellKey = ref.watch(shellScaffoldKeyProvider);
     final user = ref.watch(authProvider).user;
     final role = user?.role ?? 'tenant';
@@ -85,10 +88,37 @@ class AppShell extends ConsumerWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                active ? activeIcons[i] : icons[i],
-                                size: 22,
-                                color: active ? AppColors.accentGreen : AppColors.textMutedOnDark,
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Icon(
+                                    active ? activeIcons[i] : icons[i],
+                                    size: 22,
+                                    color: active ? AppColors.accentGreen : AppColors.textMutedOnDark,
+                                  ),
+                                  if (i == 2 && unreadCount > 0)
+                                    Positioned(
+                                      right: -6,
+                                      top: -4,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                        constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.accentGreen,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          unreadCount > 9 ? '9+' : '$unreadCount',
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyles.caption.copyWith(
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.w800,
+                                            color: AppColors.canvasDark,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                               const SizedBox(height: 2),
                               Text(

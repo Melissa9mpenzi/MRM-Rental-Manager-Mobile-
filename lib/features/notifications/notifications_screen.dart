@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_mgr_mobile/core/api/notifications_api.dart';
@@ -10,19 +12,39 @@ final notificationsListProvider = FutureProvider<List<dynamic>>((ref) {
   return ref.watch(notificationsApiProvider).list();
 });
 
+final unreadNotificationsCountProvider = FutureProvider<int>((ref) {
+  return ref.watch(notificationsApiProvider).unreadCount();
+});
+
+/// Keeps unread count fresh while the app shell is mounted.
+final notificationPollProvider = Provider<void>((ref) {
+  final timer = Timer.periodic(const Duration(seconds: 25), (_) {
+    ref.invalidate(unreadNotificationsCountProvider);
+    ref.invalidate(notificationsListProvider);
+  });
+  ref.onDispose(timer.cancel);
+});
+
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(notificationPollProvider);
     final items = ref.watch(notificationsListProvider);
+
+    Future<void> refresh() async {
+      ref.invalidate(notificationsListProvider);
+      ref.invalidate(unreadNotificationsCountProvider);
+      await ref.read(notificationsListProvider.future);
+    }
 
     return PageScaffold(
       title: 'Notifications',
       body: items.when(
         data: (list) => RefreshIndicator(
           color: AppColors.accentGreen,
-          onRefresh: () async => ref.invalidate(notificationsListProvider),
+          onRefresh: refresh,
           child: list.isEmpty
               ? ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
