@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rental_mgr_mobile/core/config/api_url_store.dart';
 import 'package:rental_mgr_mobile/core/routing/app_router.dart';
 import 'package:rental_mgr_mobile/core/theme/app_theme.dart';
+import 'package:rental_mgr_mobile/core/theme/theme_mode_provider.dart';
 import 'package:rental_mgr_mobile/firebase_options.dart';
 
 Future<void> main() async {
@@ -33,7 +34,10 @@ class _BootstrapAppState extends ConsumerState<_BootstrapApp> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(apiUrlProvider.notifier).ensureLoaded());
+    Future.microtask(() async {
+      await ref.read(apiUrlProvider.notifier).ensureLoaded();
+      await ref.read(themeModeProvider.notifier).ensureLoaded();
+    });
   }
 
   @override
@@ -48,6 +52,7 @@ class RentalMgrApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final themePreference = ref.watch(themeModeProvider);
 
     return ScreenUtilInit(
       designSize: const Size(360, 690),
@@ -57,7 +62,9 @@ class RentalMgrApp extends ConsumerWidget {
         return MaterialApp.router(
           title: 'RentDirect UG',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.darkTheme,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themePreference.themeMode,
           routerConfig: router,
         );
       },

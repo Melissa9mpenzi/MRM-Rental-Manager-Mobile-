@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
-import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
+import 'package:rental_mgr_mobile/core/theme/app_theme_extension.dart';
 import 'package:rental_mgr_mobile/core/widgets/app_shell.dart';
 
 /// In-shell page with title bar and drawer menu.
@@ -22,7 +21,7 @@ class PageScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: AppColors.canvasDark,
+      backgroundColor: context.rdTheme.canvas,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.menu_rounded),

@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
 import 'package:rental_mgr_mobile/core/auth/onboarding_navigation.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
-import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
-import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
+import 'package:rental_mgr_mobile/core/theme/app_theme_extension.dart';
 import 'package:rental_mgr_mobile/core/widgets/app_drawer.dart';
 import 'package:rental_mgr_mobile/features/notifications/notifications_screen.dart';
 
@@ -62,16 +61,18 @@ class AppShell extends ConsumerWidget {
         ((role == 'tenant' || role == 'staff') && path.startsWith('/listings/')) ||
         (path.startsWith('/messages/') && path != RouteNames.messages);
 
+    final rd = context.rdTheme;
+
     return Scaffold(
       key: shellKey,
-      backgroundColor: AppColors.canvasDark,
+      backgroundColor: rd.canvas,
       drawer: const AppDrawer(),
       body: child,
       bottomNavigationBar: showBottomNav
           ? Container(
               decoration: BoxDecoration(
-                color: AppColors.surfaceDark,
-                border: Border(top: BorderSide(color: AppColors.glassBorder.withOpacity(0.6))),
+                color: rd.surface,
+                border: Border(top: BorderSide(color: rd.glassBorder.withOpacity(0.6))),
               ),
               child: SafeArea(
                 child: Padding(
@@ -94,7 +95,7 @@ class AppShell extends ConsumerWidget {
                                   Icon(
                                     active ? activeIcons[i] : icons[i],
                                     size: 22,
-                                    color: active ? AppColors.accentGreen : AppColors.textMutedOnDark,
+                                    color: active ? Theme.of(context).colorScheme.primary : rd.textMuted,
                                   ),
                                   if (i == 2 && unreadCount > 0)
                                     Positioned(
@@ -104,16 +105,16 @@ class AppShell extends ConsumerWidget {
                                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                                         constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
                                         decoration: BoxDecoration(
-                                          color: AppColors.accentGreen,
+                                          color: Theme.of(context).colorScheme.primary,
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Text(
                                           unreadCount > 9 ? '9+' : '$unreadCount',
                                           textAlign: TextAlign.center,
-                                          style: AppTextStyles.caption.copyWith(
+                                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                             fontSize: 8,
                                             fontWeight: FontWeight.w800,
-                                            color: AppColors.canvasDark,
+                                            color: rd.canvas,
                                           ),
                                         ),
                                       ),
@@ -123,9 +124,9 @@ class AppShell extends ConsumerWidget {
                               const SizedBox(height: 2),
                               Text(
                                 labels[i],
-                                style: AppTextStyles.caption.copyWith(
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                   fontSize: 10,
-                                  color: active ? AppColors.accentGreen : AppColors.textMutedOnDark,
+                                  color: active ? Theme.of(context).colorScheme.primary : rd.textMuted,
                                   fontWeight: active ? FontWeight.w700 : FontWeight.w500,
                                 ),
                               ),
