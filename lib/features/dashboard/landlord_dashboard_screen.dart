@@ -34,6 +34,15 @@ class LandlordDashboardScreen extends ConsumerWidget {
                 subtitle: 'Portfolio performance at a glance.',
               ),
             const SizedBox(height: 16),
+            GlassPanel(
+              padding: const EdgeInsets.all(12),
+              borderRadius: 14,
+              child: Text(
+                'Mobile is optimized for quick landlord actions. For bulk operations, deep analytics, reports, and governance workflows, use the web console.',
+                style: AppTextStyles.captionOnDark,
+              ),
+            ),
+            const SizedBox(height: 12),
             stats.when(
               data: (s) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

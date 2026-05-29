@@ -34,6 +34,15 @@ class AgentDashboardScreen extends ConsumerWidget {
                 subtitle: 'Leads, listings, and maintenance in one view.',
               ),
             const SizedBox(height: 16),
+            GlassPanel(
+              padding: const EdgeInsets.all(12),
+              borderRadius: 14,
+              child: Text(
+                'Agent mobile is field-first (captures, inspections, communication). Use web for advanced reporting and back-office analytics.',
+                style: AppTextStyles.captionOnDark,
+              ),
+            ),
+            const SizedBox(height: 12),
             summary.when(
               data: (s) {
                 final kpis = s['kpis'] as Map<String, dynamic>? ?? {};

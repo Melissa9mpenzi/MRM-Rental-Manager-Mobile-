@@ -28,6 +28,20 @@ The mobile client mirrors core RentDirect UG flows:
 
 On **web builds**, the app defaults to the production Vercel backend. On **Android/iOS**, you can point at your local machine during development.
 
+### Mobile-first scope policy
+
+This app is intentionally optimized for **fast daily actions**:
+
+- Tenant primary usage (browse, apply, pay, chat, notifications)
+- Agent field usage (leads, inspections, quick updates)
+- Landlord quick actions (alerts, approvals, messaging, light portfolio checks)
+
+The web platform remains primary for heavy operations:
+
+- Government modules (NIRA/KCCA/URA) — web only
+- System admin controls — web only
+- Deep analytics, audits, exports, and moderation — web primary
+
 ---
 
 ## Tech stack
