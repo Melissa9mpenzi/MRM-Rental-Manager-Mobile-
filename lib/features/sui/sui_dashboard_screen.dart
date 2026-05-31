@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/api/blockchain_api.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
+import 'package:rental_mgr_mobile/core/sui/sui_wallet_actions.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
 
@@ -42,11 +43,11 @@ class SuiDashboardScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        _actionBtn(context, 'Send', Icons.send_rounded),
+                        _actionBtn(context, 'Send', Icons.send_rounded, address: wallet['sui_address']?.toString()),
                         const SizedBox(width: 8),
-                        _actionBtn(context, 'Receive', Icons.call_received_rounded),
+                        _actionBtn(context, 'Receive', Icons.call_received_rounded, address: wallet['sui_address']?.toString()),
                         const SizedBox(width: 8),
-                        _actionBtn(context, 'Swap', Icons.swap_horiz_rounded),
+                        _actionBtn(context, 'Swap', Icons.swap_horiz_rounded, address: wallet['sui_address']?.toString()),
                       ],
                     ),
                   ],
@@ -96,21 +97,18 @@ class SuiDashboardScreen extends ConsumerWidget {
     );
   }
 
-  void _walletHint(BuildContext context, String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '$action uses a linked Sui wallet — connect on the web Sui portal or pay rent with MoMo in this app.',
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  Widget _actionBtn(BuildContext context, String label, IconData icon) {
+  Widget _actionBtn(BuildContext context, String label, IconData icon, {String? address}) {
     return Expanded(
       child: OutlinedButton.icon(
-        onPressed: () => _walletHint(context, label),
+        onPressed: () {
+          if (label == 'Send') {
+            openWebSuiSend(context);
+          } else if (label == 'Receive') {
+            showSuiReceiveSheet(context, address: address);
+          } else {
+            openWebSuiSend(context);
+          }
+        },
         icon: Icon(icon, size: 16),
         label: Text(label, style: const TextStyle(fontSize: 12)),
         style: OutlinedButton.styleFrom(

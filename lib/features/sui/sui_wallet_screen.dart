@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rental_mgr_mobile/core/api/blockchain_api.dart';
+import 'package:rental_mgr_mobile/core/sui/sui_wallet_actions.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
-import 'package:rental_mgr_mobile/features/sui/sui_dashboard_screen.dart';
+
+final suiWalletProvider = FutureProvider<Map<String, dynamic>>((ref) {
+  return ref.watch(blockchainApiProvider).myWallet();
+});
 
 class SuiWalletScreen extends ConsumerWidget {
   const SuiWalletScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dash = ref.watch(suiDashboardProvider);
-    return dash.when(
+    final walletAsync = ref.watch(suiWalletProvider);
+    return walletAsync.when(
       loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF8B5CF6))),
       error: (e, _) => Center(child: Text('$e')),
-      data: (d) {
-        final wallet = (d['wallet'] as Map?)?.cast<String, dynamic>() ?? {};
+      data: (wallet) {
+        final address = wallet['sui_address']?.toString();
+        final balance = wallet['sui_balance']?.toString() ?? '—';
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -25,32 +31,31 @@ class SuiWalletScreen extends ConsumerWidget {
                   Text('SUI balance', style: AppTextStyles.caption.copyWith(color: Colors.white54)),
                   const SizedBox(height: 6),
                   Text(
-                    wallet['sui_balance']?.toString() ?? 'Connect on web',
+                    balance,
                     style: AppTextStyles.headingSmallOnDark.copyWith(fontWeight: FontWeight.w800),
                   ),
+                  if (address != null && address.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      address,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.caption.copyWith(color: Colors.white38, fontFamily: 'monospace'),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
                         child: FilledButton(
-                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Send: link your Sui wallet on the web app, or pay rent with MoMo here.'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          ),
+                          onPressed: () => openWebSuiSend(context),
                           child: const Text('Send'),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Receive: share your wallet address from the web Sui portal.'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          ),
+                          onPressed: () => showSuiReceiveSheet(context, address: address),
                           child: const Text('Receive'),
                         ),
                       ),
@@ -62,7 +67,7 @@ class SuiWalletScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             Text('Tokens', style: AppTextStyles.headingSmallOnDark),
             const SizedBox(height: 8),
-            _token('SUI', wallet['sui_balance']?.toString() ?? '—'),
+            _token('SUI', balance),
             _token('Escrow', '${wallet['escrow_balance'] ?? 0} SUI'),
           ],
         );

@@ -27,7 +27,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       step: 2,
       imageAsset: AppAssets.heroVilla,
       title: 'Find verified rentals in Uganda',
-      subtitle: 'Browse trusted listings with smart filters and AI recommendations.',
+      subtitle: 'Browse verified listings with smart filters from the live marketplace.',
     ),
     _OnboardPage(
       step: 2,

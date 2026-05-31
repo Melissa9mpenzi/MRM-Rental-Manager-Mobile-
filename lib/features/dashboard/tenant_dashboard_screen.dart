@@ -67,7 +67,7 @@ class TenantDashboardScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Recommended for you', style: AppTextStyles.headingMedium),
+            Text('Available listings', style: AppTextStyles.headingMedium),
             const SizedBox(height: 12),
             listings.when(
               data: (list) {

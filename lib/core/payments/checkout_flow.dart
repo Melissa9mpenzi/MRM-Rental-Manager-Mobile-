@@ -6,7 +6,7 @@ import 'package:rental_mgr_mobile/core/payments/payment_method_config.dart';
 import 'package:rental_mgr_mobile/core/widgets/payment_method_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _webSuiPayUrl = 'https://mrm-rental-manager-frontend-pink.vercel.app/tenant/pay';
+import 'package:rental_mgr_mobile/core/sui/sui_web_links.dart';
 
 String apiMethodFromApp(AppPaymentMethod method) {
   return switch (method) {
@@ -169,11 +169,11 @@ Future<void> _openWebSuiPay(BuildContext context) async {
 
   if (open != true || !context.mounted) return;
 
-  final uri = Uri.parse(_webSuiPayUrl);
+  final uri = Uri.parse(kWebSuiPayUrl);
   if (await canLaunchUrl(uri)) {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
     _snack(context, 'Opened web pay page for Sui wallet checkout.');
   } else {
-    _snack(context, 'Could not open web pay page. Open $_webSuiPayUrl manually.');
+    _snack(context, 'Could not open web pay page. Open $kWebSuiPayUrl manually.');
   }
 }
