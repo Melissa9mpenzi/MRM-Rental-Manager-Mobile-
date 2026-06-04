@@ -77,7 +77,7 @@ class WalletScreen extends ConsumerWidget {
                           spacing: 8,
                           runSpacing: 8,
                           children: byMethod.entries.map((e) {
-                            final pm = AppPaymentMethod.fromApi(e.key) ?? AppPaymentMethod.other;
+                            final pm = AppPaymentMethod.fromApi(e.key) ?? AppPaymentMethod.mtnMomo;
                             return Chip(
                               backgroundColor: AppColors.glassFill,
                               side: const BorderSide(color: AppColors.glassBorder),

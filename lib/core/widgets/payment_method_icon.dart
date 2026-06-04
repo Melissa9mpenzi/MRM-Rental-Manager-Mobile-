@@ -40,7 +40,7 @@ class PaymentMethodIconFromApi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final method = AppPaymentMethod.fromApi(apiValue) ?? AppPaymentMethod.other;
+    final method = AppPaymentMethod.fromApi(apiValue) ?? AppPaymentMethod.mtnMomo;
     return PaymentMethodIcon(method: method, size: size, borderRadius: 6);
   }
 }

@@ -1,12 +1,10 @@
-/// Backend `PaymentMethod` values: mtn_momo, airtel, cash, bank, other.
+/// Backend `PaymentMethod` values — no cash.
 enum AppPaymentMethod {
   mtnMomo('mtn_momo', 'MTN MoMo', 'mtn'),
   airtel('airtel', 'Airtel Money', 'airtel'),
-  visa('other', 'Visa / Card', 'visa'),
+  pesapal('pesapal', 'Card / Pesapal', 'visa'),
   bank('bank', 'Bank transfer', 'bank'),
-  cash('cash', 'Cash', 'cash'),
-  sui('sui', 'Sui Wallet', 'sui'),
-  other('other', 'Other', 'other');
+  sui('sui', 'Sui Wallet', 'sui');
 
   const AppPaymentMethod(this.apiValue, this.label, this.logoAsset);
 
@@ -27,16 +25,18 @@ enum AppPaymentMethod {
     return switch (k) {
       'mtn' || 'momo_mtn' || 'mobile_money' => AppPaymentMethod.mtnMomo,
       'momo_airtel' => AppPaymentMethod.airtel,
-      'bank_transfer' || 'card' => AppPaymentMethod.bank,
-      _ => AppPaymentMethod.other,
+      'bank_transfer' => AppPaymentMethod.bank,
+      'card' || 'visa' || 'mastercard' || 'other' => AppPaymentMethod.pesapal,
+      'cash' => null,
+      _ => AppPaymentMethod.mtnMomo,
     };
   }
 
-  /// Tenant checkout: MoMo + Pesapal + Sui wallet (hybrid Web3).
+  /// Tenant checkout: MoMo, Airtel, Pesapal, Sui.
   static const tenantCheckout = [
     AppPaymentMethod.mtnMomo,
     AppPaymentMethod.airtel,
-    AppPaymentMethod.visa,
+    AppPaymentMethod.pesapal,
     AppPaymentMethod.sui,
   ];
 
@@ -44,9 +44,9 @@ enum AppPaymentMethod {
   static const recordPayment = [
     AppPaymentMethod.mtnMomo,
     AppPaymentMethod.airtel,
-    AppPaymentMethod.cash,
+    AppPaymentMethod.pesapal,
     AppPaymentMethod.bank,
-    AppPaymentMethod.other,
+    AppPaymentMethod.sui,
   ];
 }
 

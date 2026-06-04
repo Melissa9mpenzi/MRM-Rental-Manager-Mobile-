@@ -12,11 +12,9 @@ String apiMethodFromApp(AppPaymentMethod method) {
   return switch (method) {
     AppPaymentMethod.mtnMomo => 'mtn_momo',
     AppPaymentMethod.airtel => 'airtel',
-    AppPaymentMethod.visa => 'other',
+    AppPaymentMethod.pesapal => 'pesapal',
     AppPaymentMethod.sui => 'sui',
     AppPaymentMethod.bank => 'bank',
-    AppPaymentMethod.cash => 'cash',
-    AppPaymentMethod.other => 'other',
   };
 }
 
