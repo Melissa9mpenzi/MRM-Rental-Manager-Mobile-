@@ -23,7 +23,7 @@ dependencies:
   firebase_auth: ^6.5.1
   # Stay on 6.x: 7.x removed the default constructor / signIn() used in our helper.
   google_sign_in: '>=6.2.2 <7.0.0'
-  sign_in_with_apple: ^6.1.4
+  sign_in_with_apple: ^8.1.0
   flutter_svg: ^2.0.10+1
   url_launcher: ^6.3.0
 
