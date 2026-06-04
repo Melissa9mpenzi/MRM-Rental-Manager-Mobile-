@@ -1,0 +1,207 @@
+# RentDirect Mobile — continuous integration and deployment
+# Docs: see backend repo docs/CI_CD.md
+
+name: Mobile CI/CD
+
+on:
+  push:
+    branches: [main, master, develop, feature-fix]
+  pull_request:
+    branches: [main, master, develop, feature-fix]
+  workflow_dispatch:
+    inputs:
+      run_deploy:
+        description: Deploy web build to Vercel (requires secrets)
+        type: boolean
+        default: false
+
+concurrency:
+  group: mobile-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  API_BASE_URL: https://mrm-rental-manager-backend.vercel.app
+  SUI_NETWORK: testnet
+
+jobs:
+  analyze:
+    name: Analyze & format
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting
+        continue-on-error: true
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+  test:
+    name: Unit & widget tests
+    runs-on: ubuntu-latest
+    needs: analyze
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test --reporter expanded
+
+      - name: Upload coverage (if generated)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-coverage
+          path: coverage/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  build-web:
+    name: Web release build
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: |
+          flutter build web --release \
+            --dart-define=API_BASE_URL=${{ env.API_BASE_URL }} \
+            --dart-define=SUI_NETWORK=${{ env.SUI_NETWORK }}
+          test -f build/web/index.html
+
+      - name: Build summary
+        run: |
+          echo "## Web build" >> "$GITHUB_STEP_SUMMARY"
+          du -sh build/web | awk '{print "- Size: `" $1 "`"}' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-web-dist
+          path: build/web/
+          retention-days: 7
+
+  build-android:
+    name: Android debug APK smoke
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 35
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build debug APK
+        run: |
+          flutter build apk --debug \
+            --dart-define=API_BASE_URL=${{ env.API_BASE_URL }} \
+            --dart-define=SUI_NETWORK=${{ env.SUI_NETWORK }}
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
+          if-no-files-found: ignore
+
+  deploy:
+    name: Deploy web to Vercel
+    runs-on: ubuntu-latest
+    needs: build-web
+    if: >
+      (github.event_name == 'workflow_dispatch' && inputs.run_deploy == true) ||
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'))
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://mrm-rental-manager-mobile.vercel.app
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web for deploy
+        run: bash scripts/vercel-build-web.sh
+
+      - name: Deploy to Vercel
+        id: deploy
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
+          working-directory: ./
+
+      - name: Skip deploy (secrets not configured)
+        if: ${{ secrets.VERCEL_TOKEN == '' }}
+        run: |
+          echo "::notice::Vercel deploy skipped. Add secrets or use Vercel Git integration."
+          echo "## Deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "Mobile web deploys via \`scripts/vercel-build-web.sh\` when connected in Vercel." >> "$GITHUB_STEP_SUMMARY"
