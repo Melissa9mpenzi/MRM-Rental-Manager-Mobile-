@@ -23,7 +23,8 @@ class AgentDashboardScreen extends ConsumerWidget {
     return PageScaffold(
       title: 'Workspace',
       body: RefreshIndicator(
-        color: AppColors.accentGreen,
+        color: AppColors.primary,
+        backgroundColor: AppColors.surface,
         onRefresh: () async => ref.invalidate(agentWorkspaceSummaryProvider),
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -34,19 +35,36 @@ class AgentDashboardScreen extends ConsumerWidget {
                 subtitle: 'Leads, listings, and maintenance in one view.',
               ),
             const SizedBox(height: 16),
-            GlassPanel(
+            // Tip banner
+            Container(
               padding: const EdgeInsets.all(12),
-              borderRadius: 14,
-              child: Text(
-                'Agent mobile is field-first (captures, inspections, communication). Use web for advanced reporting and back-office analytics.',
-                style: AppTextStyles.captionOnDark,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
+                borderRadius: BorderRadius.circular(12),
+                border:
+                    Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline_rounded,
+                      size: 16, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Agent mobile is field-first. Use web for advanced reporting.',
+                      style: AppTextStyles.caption
+                          .copyWith(color: AppColors.primary),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 12),
             summary.when(
               data: (s) {
                 final kpis = s['kpis'] as Map<String, dynamic>? ?? {};
-                final maint = s['maintenance'] as Map<String, dynamic>? ?? {};
+                final maint =
+                    s['maintenance'] as Map<String, dynamic>? ?? {};
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -63,7 +81,8 @@ class AgentDashboardScreen extends ConsumerWidget {
                         Expanded(
                           child: StatMetricCard(
                             label: 'Active tickets',
-                            value: '${maint['open'] ?? 0} open · ${maint['in_progress'] ?? 0} in progress',
+                            value:
+                                '${maint['open'] ?? 0} open · ${maint['in_progress'] ?? 0} in progress',
                             icon: Icons.handshake_outlined,
                           ),
                         ),
@@ -77,16 +96,19 @@ class AgentDashboardScreen extends ConsumerWidget {
                             label: 'Listings live',
                             value: '${s['properties_listed'] ?? 0}',
                             icon: Icons.list_alt_outlined,
-                            accent: AppColors.forestTeal,
+                            accent: AppColors.primary,
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: StatMetricCard(
                             label: 'Commissions YTD',
-                            value: formatUgx(_num(kpis['commissions_ytd_ugx'])),
-                            subtitle: 'Pending ${formatUgx(_num(kpis['pending_payout_ugx']))}',
+                            value: formatUgx(
+                                _num(kpis['commissions_ytd_ugx'])),
+                            subtitle:
+                                'Pending ${formatUgx(_num(kpis['pending_payout_ugx']))}',
                             icon: Icons.payments_outlined,
+                            accent: AppColors.success,
                           ),
                         ),
                       ],
@@ -94,11 +116,21 @@ class AgentDashboardScreen extends ConsumerWidget {
                   ],
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator(color: AppColors.accentGreen)),
-              error: (_, __) => GlassPanel(
+              loading: () => Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+              error: (_, __) => Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.2)),
+                ),
                 child: Text(
-                  'Agent metrics use GET /workspace/staff/summary (staff or admin token).',
-                  style: AppTextStyles.captionOnDark,
+                  'Agent metrics use GET /workspace/staff/summary.',
+                  style: AppTextStyles.caption
+                      .copyWith(color: AppColors.primary),
                 ),
               ),
             ),
@@ -108,7 +140,7 @@ class AgentDashboardScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Pipeline', style: AppTextStyles.headingSmallOnDark),
+                    Text('Pipeline', style: AppTextStyles.headingSmall),
                     const SizedBox(height: 12),
                     ..._pipelineBars(s),
                   ],
@@ -133,9 +165,14 @@ class AgentDashboardScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Commission trend', style: AppTextStyles.headingSmallOnDark),
+                      Text('Commission trend',
+                          style: AppTextStyles.headingSmall),
                       const SizedBox(height: 12),
-                      DashboardBarChart(labels: labels, values: values, height: 100, barColor: AppColors.forestTeal),
+                      DashboardBarChart(
+                          labels: labels,
+                          values: values,
+                          height: 100,
+                          barColor: AppColors.primary),
                     ],
                   ),
                 );
@@ -144,7 +181,7 @@ class AgentDashboardScreen extends ConsumerWidget {
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 20),
-            Text('Quick actions', style: AppTextStyles.headingMedium),
+            Text('Quick actions', style: AppTextStyles.headingSmall),
             const SizedBox(height: 12),
             GridView.count(
               crossAxisCount: 2,
@@ -154,12 +191,25 @@ class AgentDashboardScreen extends ConsumerWidget {
               crossAxisSpacing: 10,
               childAspectRatio: 1.4,
               children: [
-                QuickActionChip(icon: Icons.search_rounded, label: 'Browse listings', onTap: () => context.push(RouteNames.search)),
-                QuickActionChip(icon: Icons.chat_bubble_outline_rounded, label: 'Rental Hub', onTap: () => context.push(RouteNames.messages)),
-                QuickActionChip(icon: Icons.build_outlined, label: 'Maintenance', onTap: () => context.push(RouteNames.maintenance)),
-                QuickActionChip(icon: Icons.account_balance_wallet_outlined, label: 'Wallet', onTap: () => context.push(RouteNames.wallet)),
+                QuickActionChip(
+                    icon: Icons.search_rounded,
+                    label: 'Browse listings',
+                    onTap: () => context.push(RouteNames.search)),
+                QuickActionChip(
+                    icon: Icons.chat_bubble_outline_rounded,
+                    label: 'Rental Hub',
+                    onTap: () => context.push(RouteNames.messages)),
+                QuickActionChip(
+                    icon: Icons.build_outlined,
+                    label: 'Maintenance',
+                    onTap: () => context.push(RouteNames.maintenance)),
+                QuickActionChip(
+                    icon: Icons.account_balance_wallet_outlined,
+                    label: 'Wallet',
+                    onTap: () => context.push(RouteNames.wallet)),
               ],
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -170,7 +220,8 @@ class AgentDashboardScreen extends ConsumerWidget {
     final stages = (s['pipeline_stages'] as List?) ?? [];
     if (stages.isEmpty) {
       return [
-        Text('Pipeline stages will appear when CRM data is wired.', style: AppTextStyles.captionOnDark),
+        Text('Pipeline stages will appear when CRM data is wired.',
+            style: AppTextStyles.caption),
       ];
     }
     var maxC = 1;
@@ -192,8 +243,10 @@ class AgentDashboardScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(label, style: AppTextStyles.captionOnDark),
-                Text('$c', style: AppTextStyles.bodySmallOnDark),
+                Text(label, style: AppTextStyles.caption),
+                Text('$c',
+                    style: AppTextStyles.bodySmall
+                        .copyWith(fontWeight: FontWeight.w600)),
               ],
             ),
             const SizedBox(height: 4),
@@ -202,8 +255,8 @@ class AgentDashboardScreen extends ConsumerWidget {
               child: LinearProgressIndicator(
                 value: v.clamp(0.0, 1.0),
                 minHeight: 8,
-                backgroundColor: AppColors.glassFill,
-                color: AppColors.accentGreen,
+                backgroundColor: AppColors.pageBg,
+                color: AppColors.primary,
               ),
             ),
           ],

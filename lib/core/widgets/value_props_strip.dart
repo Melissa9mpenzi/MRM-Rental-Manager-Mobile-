@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 
-/// Footer value props from the design board.
+/// Footer value props strip
 class ValuePropsStrip extends StatelessWidget {
   const ValuePropsStrip({super.key});
 
@@ -16,6 +16,14 @@ class ValuePropsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final iconColor = brightness == Brightness.dark
+        ? AppColors.sidebarActive
+        : AppColors.primary;
+    final textStyle = brightness == Brightness.dark
+        ? AppTextStyles.captionOnDark.copyWith(fontSize: 9)
+        : AppTextStyles.caption.copyWith(fontSize: 9);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: _items
@@ -23,9 +31,9 @@ class ValuePropsStrip extends StatelessWidget {
             (e) => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(e.$1, size: 20, color: AppColors.accentGreen.withValues(alpha: 0.85)),
+                Icon(e.$1, size: 18, color: iconColor),
                 const SizedBox(height: 4),
-                Text(e.$2, style: AppTextStyles.captionOnDark.copyWith(fontSize: 9)),
+                Text(e.$2, style: textStyle),
               ],
             ),
           )

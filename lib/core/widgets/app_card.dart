@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 
-/// White card with teal border and subtle shadow — matches brand spec.
+/// Clean white card with subtle border and shadow — light theme.
 class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -27,14 +27,14 @@ class AppCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: backgroundColor ?? AppColors.pureWhite,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.tealLight),
+          color: backgroundColor ?? AppColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepCharcoal.withValues(alpha: 0.06),
+              color: AppColors.textPrimary.withValues(alpha: 0.06),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: const Offset(0, 1),
             ),
           ],
         ),
@@ -44,20 +44,13 @@ class AppCard extends StatelessWidget {
           children: [
             if (title != null)
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: AppColors.tealLight),
-                  ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: AppColors.border)),
                 ),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: Text(title!, style: AppTextStyles.headingSmall),
-                    ),
+                    Expanded(child: Text(title!, style: AppTextStyles.headingSmall)),
                     if (trailing != null) trailing!,
                   ],
                 ),
@@ -99,14 +92,14 @@ class StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.pureWhite,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.tealLight),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepCharcoal.withValues(alpha: 0.06),
+            color: AppColors.textPrimary.withValues(alpha: 0.06),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -118,34 +111,27 @@ class StatCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: iconBg ?? AppColors.forestTeal.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
+                  color: iconBg ?? AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   icon,
                   size: 20,
-                  color: iconColor ?? AppColors.forestTeal,
+                  color: iconColor ?? AppColors.primary,
                 ),
               ),
               const Spacer(),
               if (trend != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: trendPositive
-                        ? AppColors.success.withValues(alpha: 0.1)
-                        : AppColors.error.withValues(alpha: 0.1),
+                    color: trendPositive ? AppColors.successLight : AppColors.errorLight,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     trend!,
                     style: AppTextStyles.caption.copyWith(
-                      color: trendPositive
-                          ? AppColors.success
-                          : AppColors.error,
+                      color: trendPositive ? AppColors.success : AppColors.error,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

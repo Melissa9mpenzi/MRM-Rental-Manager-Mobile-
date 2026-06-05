@@ -154,11 +154,15 @@ class WalletScreen extends ConsumerWidget {
                   children: list.take(20).map((p) {
                     final m = p as Map<String, dynamic>;
                     final method = m['payment_method'] as String? ?? '';
+
                     return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.only(bottom: 12),
                       child: GlassPanel(
                           padding: const EdgeInsets.all(16),
                           borderRadius: 16,
+                        padding: const EdgeInsets.all(16),
+                        borderRadius: 16,
                         child: Row(
                           children: [
                               Container(
@@ -169,8 +173,16 @@ class WalletScreen extends ConsumerWidget {
                                 ),
                                 child: PaymentMethodIconFromApi(
                                     apiValue: method, size: 28),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentGreen.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               const SizedBox(width: 16),
+                              child: PaymentMethodIconFromApi(apiValue: method, size: 28),
+                            ),
+                            const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,26 +195,45 @@ class WalletScreen extends ConsumerWidget {
                                                     color: AppColors.brandDark, fontWeight: FontWeight.bold)),
                                     const SizedBox(height: 2),
                                   Text(
+                                    formatUgx(_num(m['amount'])),
+                                    style: (isDark
+                                            ? AppTextStyles.bodyMediumOnDark
+                                            : AppTextStyles.bodyMediumOnDark.copyWith(color: AppColors.brandDark))
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
                                     '${m['payment_date'] ?? ''} · ${paymentMethodLabelFromApi(method)}',
                                     style: isDark
                                         ? AppTextStyles.captionOnDark
                                         : AppTextStyles.bodySmallOnDark
                                             .copyWith(color: AppColors.mid),
+                                        : AppTextStyles.bodySmallOnDark.copyWith(color: AppColors.mid),
                                   ),
                                   if (m['property_name'] != null)
                                       Padding(
                                         padding: const EdgeInsets.only(top: 2),
                                         child: Text('${m['property_name']}',
                                             style: (isDark
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: Text(
+                                        '${m['property_name']}',
+                                        style: (isDark
                                                 ? AppTextStyles.captionOnDark
                                                 : AppTextStyles.bodySmallOnDark
                                                     .copyWith(color: AppColors.mid)).copyWith(fontSize: 10),
                                             maxLines: 1),
+                                                : AppTextStyles.bodySmallOnDark.copyWith(color: AppColors.mid))
+                                            .copyWith(fontSize: 10),
+                                        maxLines: 1,
                                       ),
+                                    ),
                                 ],
                               ),
                             ),
                               const Icon(Icons.chevron_right_rounded, color: AppColors.mid, size: 20),
+                            const Icon(Icons.chevron_right_rounded, color: AppColors.mid, size: 20),
                           ],
                         ),
                       ),
@@ -215,6 +246,11 @@ class WalletScreen extends ConsumerWidget {
                 child: Center(
                     child: CircularProgressIndicator(
                         color: AppColors.accentGreen)),
+              loading: () => const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(24),
+                  child: CircularProgressIndicator(color: AppColors.accentGreen),
+                ),
               ),
               error: (_, __) => Text('Could not load transactions.',
                   style: isDark

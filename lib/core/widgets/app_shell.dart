@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
 import 'package:rental_mgr_mobile/core/auth/onboarding_navigation.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
+import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_theme_extension.dart';
 import 'package:rental_mgr_mobile/core/widgets/app_drawer.dart';
 import 'package:rental_mgr_mobile/features/notifications/notifications_screen.dart';
@@ -65,14 +66,21 @@ class AppShell extends ConsumerWidget {
 
     return Scaffold(
       key: shellKey,
-      backgroundColor: rd.canvas,
+      backgroundColor: AppColors.pageBg,
       drawer: const AppDrawer(),
       body: child,
       bottomNavigationBar: showBottomNav
           ? Container(
               decoration: BoxDecoration(
-                color: rd.surface,
-                border: Border(top: BorderSide(color: rd.glassBorder.withValues(alpha: 0.6))),
+                color: AppColors.surface,
+                border: Border(top: BorderSide(color: AppColors.border)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.textPrimary.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, -1),
+                  ),
+                ],
               ),
               child: SafeArea(
                 child: Padding(

@@ -17,13 +17,15 @@ class AppDrawer extends ConsumerWidget {
     final items = drawerItemsForRole(role);
 
     return Drawer(
-      backgroundColor: AppColors.surfaceDark,
+      backgroundColor: AppColors.surface,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            // Header
+            Container(
+              color: AppColors.sidebarBg,
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -33,10 +35,8 @@ class AppDrawer extends ConsumerWidget {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
+                          color: AppColors.primary,
                           borderRadius: BorderRadius.circular(12),
-                          gradient: const LinearGradient(
-                            colors: [AppColors.accentGreen, Color(0xFF059669)],
-                          ),
                         ),
                         child: const Icon(Icons.home_work_rounded, color: Colors.white),
                       ),
@@ -45,7 +45,8 @@ class AppDrawer extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('RentDirect UG', style: AppTextStyles.headingSmallOnDark),
+                            Text('RentDirect UG',
+                                style: AppTextStyles.headingSmallOnDark),
                             Text(
                               user?.fullName ?? 'Guest',
                               style: AppTextStyles.captionOnDark,
@@ -57,18 +58,18 @@ class AppDrawer extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.accentGreen.withValues(alpha: 0.15),
+                      color: AppColors.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.accentGreen.withValues(alpha: 0.4)),
+                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
                     ),
                     child: Text(
                       role.toUpperCase(),
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.accentGreen,
+                        color: AppColors.sidebarActive,
                         fontWeight: FontWeight.w700,
                         fontSize: 10,
                       ),
@@ -77,26 +78,34 @@ class AppDrawer extends ConsumerWidget {
                 ],
               ),
             ),
-            const Divider(color: AppColors.glassBorder, height: 1),
+            Divider(height: 1, color: AppColors.border),
+            // Nav items
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: items.length,
                 itemBuilder: (context, i) {
                   final item = items[i];
-                  final current = GoRouterState.of(context).uri.path == item.route;
+                  final current =
+                      GoRouterState.of(context).uri.path == item.route;
                   return ListTile(
                     leading: Icon(
                       item.icon,
-                      color: current ? AppColors.accentGreen : AppColors.textMutedOnDark,
+                      color: current ? AppColors.primary : AppColors.textMuted,
+                      size: 22,
                     ),
                     title: Text(
                       item.label,
-                      style: AppTextStyles.bodyMediumOnDark.copyWith(
-                        color: current ? AppColors.accentGreen : AppColors.textOnDark,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: current ? AppColors.primary : AppColors.textPrimary,
                         fontWeight: current ? FontWeight.w600 : FontWeight.w400,
                       ),
                     ),
+                    tileColor: current
+                        ? AppColors.primaryLight
+                        : Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     onTap: () {
                       Navigator.pop(context);
                       context.go(item.route);
@@ -105,10 +114,12 @@ class AppDrawer extends ConsumerWidget {
                 },
               ),
             ),
-            const Divider(color: AppColors.glassBorder, height: 1),
+            Divider(height: 1, color: AppColors.border),
             ListTile(
-              leading: const Icon(Icons.logout_rounded, color: AppColors.error),
-              title: Text('Sign out', style: AppTextStyles.bodyMediumOnDark.copyWith(color: AppColors.error)),
+              leading: const Icon(Icons.logout_rounded, color: AppColors.error, size: 22),
+              title: Text('Sign out',
+                  style: AppTextStyles.bodyMedium
+                      .copyWith(color: AppColors.error)),
               onTap: () async {
                 Navigator.pop(context);
                 await ref.read(authProvider.notifier).logout();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Theme-aware RentDirect surfaces (light + dark).
+/// Theme-aware RentDirect surfaces.
 @immutable
 class RentDirectThemeExtension extends ThemeExtension<RentDirectThemeExtension> {
   const RentDirectThemeExtension({
@@ -19,22 +19,24 @@ class RentDirectThemeExtension extends ThemeExtension<RentDirectThemeExtension> 
   final Color textPrimary;
   final Color textMuted;
 
-  static const dark = RentDirectThemeExtension(
-    canvas: Color(0xFF060A0C),
-    surface: Color(0xFF10181C),
-    glassFill: Color(0x1AFFFFFF),
-    glassBorder: Color(0x33FFFFFF),
-    textPrimary: Color(0xFFF8FAFC),
-    textMuted: Color(0xFF94A3B8),
+  /// Light theme (default app shell)
+  static const light = RentDirectThemeExtension(
+    canvas: Color(0xFFF0F2F8),
+    surface: Color(0xFFFFFFFF),
+    glassFill: Color(0xFFFFFFFF),
+    glassBorder: Color(0xFFE2E8F0),
+    textPrimary: Color(0xFF111827),
+    textMuted: Color(0xFF6B7280),
   );
 
-  static const light = RentDirectThemeExtension(
-    canvas: Color(0xFFF4F7F7),
-    surface: Color(0xFFFFFFFF),
-    glassFill: Color(0xE6FFFFFF),
-    glassBorder: Color(0x33161D23),
-    textPrimary: Color(0xFF161D23),
-    textMuted: Color(0xFF576E6A),
+  /// Dark theme (used for auth scaffolds and blockchain portal)
+  static const dark = RentDirectThemeExtension(
+    canvas: Color(0xFF1E293B),
+    surface: Color(0xFF334155),
+    glassFill: Color(0x1AFFFFFF),
+    glassBorder: Color(0x1AFFFFFF),
+    textPrimary: Color(0xFFF8FAFC),
+    textMuted: Color(0xFF94A3B8),
   );
 
   @override
@@ -72,5 +74,5 @@ class RentDirectThemeExtension extends ThemeExtension<RentDirectThemeExtension> 
 
 extension RentDirectThemeContext on BuildContext {
   RentDirectThemeExtension get rdTheme =>
-      Theme.of(this).extension<RentDirectThemeExtension>() ?? RentDirectThemeExtension.dark;
+      Theme.of(this).extension<RentDirectThemeExtension>() ?? RentDirectThemeExtension.light;
 }

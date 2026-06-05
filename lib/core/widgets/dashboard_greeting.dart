@@ -22,12 +22,15 @@ class DashboardGreeting extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Hello, $name',
-            style: AppTextStyles.headingMedium.copyWith(color: AppColors.textOnDark),
+            'Hello, $name 👋',
+            style: AppTextStyles.headingMedium,
           ),
           if (subtitle != null && subtitle!.isNotEmpty) ...[
             const SizedBox(height: 4),
-            Text(subtitle!, style: AppTextStyles.captionOnDark),
+            Text(
+              subtitle!,
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textMuted),
+            ),
           ],
         ],
       ),

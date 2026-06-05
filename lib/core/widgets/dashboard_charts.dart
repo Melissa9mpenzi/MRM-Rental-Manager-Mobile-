@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 
-/// Simple horizontal set of bars — monthly revenue / volume.
+/// Simple bar chart — monthly revenue / volume.
 class DashboardBarChart extends StatelessWidget {
   const DashboardBarChart({
     super.key,
     required this.labels,
     required this.values,
-    this.barColor = AppColors.accentGreen,
+    this.barColor = AppColors.primary,
     this.height = 120,
   });
 
@@ -24,7 +24,9 @@ class DashboardBarChart extends StatelessWidget {
     if (labels.isEmpty || values.isEmpty) {
       return SizedBox(
         height: height,
-        child: Center(child: Text('No chart data yet', style: AppTextStyles.captionOnDark)),
+        child: Center(
+          child: Text('No chart data yet', style: AppTextStyles.caption),
+        ),
       );
     }
     final maxV = values.fold<double>(0, (a, b) => math.max(a, b));
@@ -36,7 +38,7 @@ class DashboardBarChart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: List.generate(labels.length, (i) {
           final v = i < values.length ? values[i] : 0.0;
-          final frac = (v / denom).clamp(0.08, 1.0);
+          final frac = (v / denom).clamp(0.06, 1.0);
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -51,8 +53,9 @@ class DashboardBarChart extends StatelessWidget {
                         widthFactor: 0.72,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: barColor.withValues(alpha: 0.85),
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                            color: barColor,
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(5)),
                           ),
                         ),
                       ),
@@ -64,7 +67,7 @@ class DashboardBarChart extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.captionOnDark.copyWith(fontSize: 9),
+                    style: AppTextStyles.caption.copyWith(fontSize: 9),
                   ),
                 ],
               ),

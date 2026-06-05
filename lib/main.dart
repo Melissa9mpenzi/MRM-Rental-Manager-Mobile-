@@ -57,7 +57,9 @@ class RentalMgrApp extends ConsumerWidget {
         return MaterialApp.router(
           title: 'RentDirect UG',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.darkTheme,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.light,
           routerConfig: router,
         );
       },

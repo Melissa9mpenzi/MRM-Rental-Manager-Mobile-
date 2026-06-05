@@ -4,7 +4,7 @@ import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 
 enum BadgeStatus { paid, arrears, vacant, maintenance, open, inProgress, resolved, low, medium, high, urgent }
 
-/// Status pill badge matching the RentalMGR brand spec
+/// Status pill badge — light theme
 class StatusBadge extends StatelessWidget {
   final BadgeStatus status;
 
@@ -32,27 +32,27 @@ class StatusBadge extends StatelessWidget {
   _BadgeConfig _badgeConfig(BadgeStatus s) {
     switch (s) {
       case BadgeStatus.paid:
-        return _BadgeConfig('Paid', AppColors.forestTeal.withValues(alpha: 0.12), AppColors.forestTeal);
+        return _BadgeConfig('Paid', AppColors.successLight, AppColors.success);
       case BadgeStatus.arrears:
-        return _BadgeConfig('Arrears', AppColors.warning.withValues(alpha: 0.12), AppColors.warning);
+        return _BadgeConfig('Arrears', AppColors.warningLight, AppColors.warning);
       case BadgeStatus.vacant:
-        return _BadgeConfig('Vacant', AppColors.sageSlate.withValues(alpha: 0.12), AppColors.sageSlate);
+        return _BadgeConfig('Vacant', const Color(0xFFF1F5F9), AppColors.statusVacant);
       case BadgeStatus.maintenance:
-        return _BadgeConfig('Maintenance', AppColors.error.withValues(alpha: 0.12), AppColors.error);
+        return _BadgeConfig('Maintenance', AppColors.errorLight, AppColors.error);
       case BadgeStatus.open:
-        return _BadgeConfig('Open', AppColors.warning.withValues(alpha: 0.12), AppColors.warning);
+        return _BadgeConfig('Open', AppColors.warningLight, AppColors.warning);
       case BadgeStatus.inProgress:
-        return _BadgeConfig('In Progress', AppColors.forestTeal.withValues(alpha: 0.12), AppColors.forestTeal);
+        return _BadgeConfig('In Progress', AppColors.primaryLight, AppColors.primary);
       case BadgeStatus.resolved:
-        return _BadgeConfig('Resolved', AppColors.success.withValues(alpha: 0.12), AppColors.success);
+        return _BadgeConfig('Resolved', AppColors.successLight, AppColors.success);
       case BadgeStatus.low:
-        return _BadgeConfig('Low', AppColors.sageSlate.withValues(alpha: 0.12), AppColors.sageSlate);
+        return _BadgeConfig('Low', const Color(0xFFF1F5F9), AppColors.statusVacant);
       case BadgeStatus.medium:
-        return _BadgeConfig('Medium', AppColors.warning.withValues(alpha: 0.12), AppColors.warning);
+        return _BadgeConfig('Medium', AppColors.warningLight, AppColors.warning);
       case BadgeStatus.high:
-        return _BadgeConfig('High', AppColors.error.withValues(alpha: 0.12), AppColors.error);
+        return _BadgeConfig('High', AppColors.errorLight, AppColors.error);
       case BadgeStatus.urgent:
-        return const _BadgeConfig('Urgent', AppColors.error, AppColors.pureWhite);
+        return _BadgeConfig('Urgent', AppColors.error, Colors.white);
     }
   }
 }

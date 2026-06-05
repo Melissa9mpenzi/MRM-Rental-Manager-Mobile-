@@ -29,12 +29,13 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: AppColors.tealLight,
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight,
                 shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
               ),
-              child: Icon(icon, size: 40, color: AppColors.forestTeal),
+              child: Icon(icon, size: 38, color: AppColors.primary),
             ),
             const SizedBox(height: 20),
             Text(
@@ -46,17 +47,13 @@ class EmptyState extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 subtitle!,
-                style: AppTextStyles.bodyMedium,
+                style: AppTextStyles.bodySmall,
                 textAlign: TextAlign.center,
               ),
             ],
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 24),
-              AppButton(
-                label: actionLabel!,
-                onPressed: onAction,
-                width: 200,
-              ),
+              AppButton(label: actionLabel!, onPressed: onAction, width: 200),
             ],
           ],
         ),
@@ -70,11 +67,7 @@ class ErrorState extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
 
-  const ErrorState({
-    super.key,
-    required this.message,
-    this.onRetry,
-  });
+  const ErrorState({super.key, required this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -84,23 +77,23 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.error_outline_rounded,
-              size: 48,
-              color: AppColors.error,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.errorLight,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.error_outline_rounded, size: 36, color: AppColors.error),
             ),
             const SizedBox(height: 16),
-            Text(
-              message,
-              style: AppTextStyles.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
+            Text(message, style: AppTextStyles.bodyMedium, textAlign: TextAlign.center),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
               AppButton(
                 label: 'Try Again',
                 onPressed: onRetry,
                 width: 160,
+                variant: AppButtonVariant.outlined,
               ),
             ],
           ],

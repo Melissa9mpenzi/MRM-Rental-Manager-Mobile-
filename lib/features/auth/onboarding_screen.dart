@@ -99,7 +99,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: i == _index ? 22 : 7,
                   height: 7,
                   decoration: BoxDecoration(
-                    color: i == _index ? AppColors.accentGreen : AppColors.textMutedOnDark.withValues(alpha: 0.35),
+                    color: i == _index
+                        ? AppColors.primary
+                        : AppColors.textMutedOnDark.withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),

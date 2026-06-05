@@ -44,7 +44,7 @@ class AppInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: AppTextStyles.bodySmall.copyWith(
-          color: AppColors.deepCharcoal,
+          color: AppColors.textPrimary,
           fontWeight: FontWeight.w600,
         )),
         const SizedBox(height: 6),
@@ -59,18 +59,18 @@ class AppInput extends StatelessWidget {
           textInputAction: textInputAction,
           focusNode: focusNode,
           style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.deepCharcoal,
+            color: AppColors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: AppTextStyles.inputPlaceholder,
             errorText: errorText,
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, size: 18, color: AppColors.sageSlate)
+                ? Icon(prefixIcon, size: 18, color: AppColors.textMuted)
                 : null,
             suffix: suffixWidget,
             filled: true,
-            fillColor: enabled ? AppColors.pureWhite : AppColors.pageBg,
+            fillColor: enabled ? AppColors.surface : AppColors.pageBg,
           ),
         ),
       ],
