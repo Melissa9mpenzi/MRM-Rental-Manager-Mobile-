@@ -60,7 +60,7 @@ class PayRentScreen extends ConsumerWidget {
                           invoice: inv,
                           defaultPhone: phone,
                         ),
-                        child: const Text('Pay with MTN / Airtel / Card'),
+                        child: const Text('Pay rent'),
                       ),
                     ),
                   ],

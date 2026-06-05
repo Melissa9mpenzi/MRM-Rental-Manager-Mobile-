@@ -4,6 +4,8 @@ import 'package:rental_mgr_mobile/core/api/api_error.dart';
 import 'package:rental_mgr_mobile/core/api/payments_api.dart';
 import 'package:rental_mgr_mobile/core/payments/payment_method_config.dart';
 import 'package:rental_mgr_mobile/core/widgets/payment_method_sheet.dart';
+import 'package:rental_mgr_mobile/features/payments/payment_checkout_handoff_screen.dart';
+import 'package:rental_mgr_mobile/features/payments/payment_momo_processing_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:rental_mgr_mobile/core/sui/sui_web_links.dart';
@@ -16,6 +18,15 @@ String apiMethodFromApp(AppPaymentMethod method) {
     AppPaymentMethod.sui => 'sui',
     AppPaymentMethod.bank => 'bank',
   };
+}
+
+String _classifyCheckoutFlow(Map<String, dynamic> checkout) {
+  final next = checkout['next_action'] as Map<String, dynamic>? ?? {};
+  final provider = '${checkout['provider'] ?? ''}'.toLowerCase();
+  final link = next['payment_link'] as String?;
+  if (link != null && link.isNotEmpty) return 'pesapal_redirect';
+  if (next['type'] == 'ussd_prompt' || provider == 'mtn_momo') return 'momo_in_app';
+  return 'unknown';
 }
 
 Future<void> runTenantCheckoutFlow({
@@ -102,18 +113,63 @@ Future<void> runTenantCheckoutFlow({
 
     final reference = checkout['reference'] as String? ?? '';
     final next = checkout['next_action'] as Map<String, dynamic>? ?? {};
-    final link = next['payment_link'] as String?;
+    final flow = _classifyCheckoutFlow(checkout);
+    final amount = (checkout['amount'] as num?) ?? _num(invoice['balance_due']);
+    final invoiceLabel = invoice['invoice_number'] != null
+        ? 'Invoice ${invoice['invoice_number']}'
+        : null;
 
-    if (link != null && link.isNotEmpty) {
-      final uri = Uri.parse(link);
+    if (flow == 'pesapal_redirect') {
+      final link = next['payment_link'] as String? ?? '';
+      if (link.isEmpty) {
+        _snack(context, 'Payment could not be started.');
+        return;
+      }
+      final launchedLink = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentCheckoutHandoffScreen(
+            paymentLink: link,
+            amount: amount,
+            invoiceLabel: invoiceLabel,
+          ),
+        ),
+      );
+      if (!context.mounted || launchedLink == null) return;
+      final uri = Uri.parse(launchedLink);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
-      _snack(context, 'Complete payment on the secure page (MTN, Airtel, or card).', long: true);
+      _snack(context, 'Complete payment on the secure Pesapal page.', long: true);
+    } else if (flow == 'momo_in_app') {
+      if (reference.isEmpty) {
+        _snack(context, 'Payment could not be started.');
+        return;
+      }
+      final result = await Navigator.push<MomoProcessingResult>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentMomoProcessingScreen(
+            reference: reference,
+            phone: phone,
+            amount: amount,
+            invoiceLabel: invoiceLabel,
+            message: next['message'] as String?,
+          ),
+        ),
+      );
+      if (!context.mounted) return;
+      if (result == MomoProcessingResult.completed) {
+        _snack(context, 'Payment confirmed and recorded.');
+      } else if (result == MomoProcessingResult.failed) {
+        _snack(context, 'Payment was not completed.');
+      } else if (result == MomoProcessingResult.timeout) {
+        _snack(context, 'Still processing. Check Wallet shortly.');
+      }
+      return;
     } else {
-      final msg = next['message'] as String? ??
-          'Check your MTN phone and approve the MoMo prompt.';
-      _snack(context, msg, long: true);
+      _snack(context, 'Payment could not be started. Check server payment configuration.');
+      return;
     }
 
     if (reference.isEmpty) return;
@@ -139,6 +195,12 @@ Future<void> runTenantCheckoutFlow({
     if (!context.mounted) return;
     _snack(context, apiErrorMessage(e, 'Could not start payment.'));
   }
+}
+
+num _num(dynamic v) {
+  if (v is num) return v;
+  if (v is String) return num.tryParse(v) ?? 0;
+  return 0;
 }
 
 void _snack(BuildContext context, String msg, {bool long = false}) {
