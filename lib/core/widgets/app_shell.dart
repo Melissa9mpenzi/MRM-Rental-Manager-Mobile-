@@ -72,7 +72,7 @@ class AppShell extends ConsumerWidget {
           ? Container(
               decoration: BoxDecoration(
                 color: rd.surface,
-                border: Border(top: BorderSide(color: rd.glassBorder.withOpacity(0.6))),
+                border: Border(top: BorderSide(color: rd.glassBorder.withValues(alpha: 0.6))),
               ),
               child: SafeArea(
                 child: Padding(

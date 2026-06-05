@@ -54,7 +54,7 @@ class SuiEscrowScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFF8B5CF6).withOpacity(0.2),
+        color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(status.toUpperCase(), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFFC4B5FD))),

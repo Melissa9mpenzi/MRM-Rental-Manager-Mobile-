@@ -30,7 +30,7 @@ Future<void> openWebSuiSend(BuildContext context) async {
     }
   } else if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Could not open browser. Visit $kWebSuiPayUrl'), behavior: SnackBarBehavior.floating),
+      const SnackBar(content: Text('Could not open browser. Visit $kWebSuiPayUrl'), behavior: SnackBarBehavior.floating),
     );
   }
 }

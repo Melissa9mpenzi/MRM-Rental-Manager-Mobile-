@@ -32,27 +32,27 @@ class StatusBadge extends StatelessWidget {
   _BadgeConfig _badgeConfig(BadgeStatus s) {
     switch (s) {
       case BadgeStatus.paid:
-        return _BadgeConfig('Paid', AppColors.forestTeal.withOpacity(0.12), AppColors.forestTeal);
+        return _BadgeConfig('Paid', AppColors.forestTeal.withValues(alpha: 0.12), AppColors.forestTeal);
       case BadgeStatus.arrears:
-        return _BadgeConfig('Arrears', AppColors.warning.withOpacity(0.12), AppColors.warning);
+        return _BadgeConfig('Arrears', AppColors.warning.withValues(alpha: 0.12), AppColors.warning);
       case BadgeStatus.vacant:
-        return _BadgeConfig('Vacant', AppColors.sageSlate.withOpacity(0.12), AppColors.sageSlate);
+        return _BadgeConfig('Vacant', AppColors.sageSlate.withValues(alpha: 0.12), AppColors.sageSlate);
       case BadgeStatus.maintenance:
-        return _BadgeConfig('Maintenance', AppColors.error.withOpacity(0.12), AppColors.error);
+        return _BadgeConfig('Maintenance', AppColors.error.withValues(alpha: 0.12), AppColors.error);
       case BadgeStatus.open:
-        return _BadgeConfig('Open', AppColors.warning.withOpacity(0.12), AppColors.warning);
+        return _BadgeConfig('Open', AppColors.warning.withValues(alpha: 0.12), AppColors.warning);
       case BadgeStatus.inProgress:
-        return _BadgeConfig('In Progress', AppColors.forestTeal.withOpacity(0.12), AppColors.forestTeal);
+        return _BadgeConfig('In Progress', AppColors.forestTeal.withValues(alpha: 0.12), AppColors.forestTeal);
       case BadgeStatus.resolved:
-        return _BadgeConfig('Resolved', AppColors.success.withOpacity(0.12), AppColors.success);
+        return _BadgeConfig('Resolved', AppColors.success.withValues(alpha: 0.12), AppColors.success);
       case BadgeStatus.low:
-        return _BadgeConfig('Low', AppColors.sageSlate.withOpacity(0.12), AppColors.sageSlate);
+        return _BadgeConfig('Low', AppColors.sageSlate.withValues(alpha: 0.12), AppColors.sageSlate);
       case BadgeStatus.medium:
-        return _BadgeConfig('Medium', AppColors.warning.withOpacity(0.12), AppColors.warning);
+        return _BadgeConfig('Medium', AppColors.warning.withValues(alpha: 0.12), AppColors.warning);
       case BadgeStatus.high:
-        return _BadgeConfig('High', AppColors.error.withOpacity(0.12), AppColors.error);
+        return _BadgeConfig('High', AppColors.error.withValues(alpha: 0.12), AppColors.error);
       case BadgeStatus.urgent:
-        return _BadgeConfig('Urgent', AppColors.error, AppColors.pureWhite);
+        return const _BadgeConfig('Urgent', AppColors.error, AppColors.pureWhite);
     }
   }
 }

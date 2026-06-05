@@ -15,9 +15,9 @@ Future<void> main() async {
     debugPrint('Firebase.initializeApp failed: $e\n$st');
   }
   runApp(
-    ProviderScope(
+    const ProviderScope(
       overrides: [],
-      child: const _BootstrapApp(),
+      child: _BootstrapApp(),
     ),
   );
 }

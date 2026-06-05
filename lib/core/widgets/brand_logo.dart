@@ -32,7 +32,7 @@ class BrandLogo extends StatelessWidget {
           Text(
             'Secure rentals · Smart payments · Trusted by Uganda',
             style: AppTextStyles.bodyMediumOnDark.copyWith(
-              color: Colors.white.withOpacity(0.55),
+              color: Colors.white.withValues(alpha: 0.55),
               fontSize: 12,
             ),
             textAlign: TextAlign.center,

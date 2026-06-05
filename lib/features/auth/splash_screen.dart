@@ -62,18 +62,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AuthPageScaffold(
+    return const AuthPageScaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const AuthHeroImage(assetPath: AppAssets.heroVilla),
+          AuthHeroImage(assetPath: AppAssets.heroVilla),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const BrandLogo(height: 96, showTagline: true),
-                const SizedBox(height: 40),
-                const SizedBox(
+                BrandLogo(height: 96, showTagline: true),
+                SizedBox(height: 40),
+                SizedBox(
                   width: 28,
                   height: 28,
                   child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.accentGreen),

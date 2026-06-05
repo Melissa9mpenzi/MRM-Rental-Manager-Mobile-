@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rental_mgr_mobile/core/api/api_error.dart';
 import 'package:rental_mgr_mobile/core/api/payments_api.dart';
-import 'package:rental_mgr_mobile/core/payments/payment_method_config.dart';
 import 'package:rental_mgr_mobile/core/widgets/payment_method_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 

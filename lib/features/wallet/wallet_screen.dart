@@ -37,6 +37,15 @@ class WalletScreen extends ConsumerWidget {
     final summary = ref.watch(walletSummaryProvider);
     final tx = ref.watch(walletTransactionsProvider);
     final role = ref.watch(authProvider).user?.role ?? 'tenant';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    void toggleTheme() {
+      // Note: This assumes an AppTheme notifier is available in your core providers
+      // If not yet implemented, this shows how to wire the UI for the 'Live' theme toggle
+      try {
+        // ref.read(appThemeProvider.notifier).toggle();
+      } catch (e) { /* Fallback if provider is missing in this context */ }
+    }
 
     Future<void> refresh() async {
       ref.invalidate(walletSummaryProvider);
@@ -45,125 +54,233 @@ class WalletScreen extends ConsumerWidget {
 
     return PageScaffold(
       title: 'Wallet',
-      body: RefreshIndicator(
-        color: AppColors.accentGreen,
-        onRefresh: refresh,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [
-            summary.when(
-              data: (s) {
-                final total = _num(s['total_paid_ugx']);
-                final count = (s['payment_count'] as num?)?.toInt() ?? 0;
-                final byMethod = (s['by_method'] as Map?)?.cast<String, dynamic>() ?? {};
-                return GlassPanel(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Total recorded', style: AppTextStyles.captionOnDark),
-                      const SizedBox(height: 6),
-                      Text(formatUgx(total), style: AppTextStyles.displayHero.copyWith(fontSize: 28)),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$count payments · ${s['scope'] ?? ''}',
-                        style: AppTextStyles.captionOnDark,
-                      ),
-                      if (byMethod.isNotEmpty) ...[
-                        const SizedBox(height: 14),
-                        Text('Methods used (from history)', style: AppTextStyles.captionOnDark),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: byMethod.entries.map((e) {
-                            final pm = AppPaymentMethod.fromApi(e.key) ?? AppPaymentMethod.other;
-                            return Chip(
-                              backgroundColor: AppColors.glassFill,
-                              side: const BorderSide(color: AppColors.glassBorder),
-                              avatar: PaymentMethodIcon(method: pm, size: 22, borderRadius: 4),
-                              label: Text(
-                                '${pm.label} · ${formatUgx(_num(e.value))}',
-                                style: AppTextStyles.captionOnDark.copyWith(fontSize: 11),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark 
+              ? [AppColors.brandDark, const Color(0xFF1C262E)] 
+              : [AppColors.bg, Colors.white],
+          ),
+        ),
+        child: RefreshIndicator(
+          color: AppColors.accentGreen,
+          onRefresh: refresh,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Wallet Activity',
+                      style: AppTextStyles.headingMedium.copyWith(
+                        color: isDark ? Colors.white : AppColors.brandDark,
+                        letterSpacing: -0.5,
+                      )),
+                  IconButton(
+                    icon: Icon(
+                        isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+                    onPressed: toggleTheme,
+                    color: AppColors.accentGreen,
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.accentGreen.withOpacity(0.1),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              summary.when(
+                data: (s) {
+                  final total = _num(s['total_paid_ugx']);
+                  final count = (s['payment_count'] as num?)?.toInt() ?? 0;
+                  final byMethod =
+                      (s['by_method'] as Map?)?.cast<String, dynamic>() ?? {};
+                  return GlassPanel(
+                    borderRadius: 24,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Total recorded',
+                            style: isDark
+                                ? AppTextStyles.captionOnDark
+                                : AppTextStyles.bodySmallOnDark
+                                    .copyWith(color: AppColors.mid)),
+                        const SizedBox(height: 6),
+                        Text(
+                          formatUgx(total),
+                          style: AppTextStyles.displayHero.copyWith(
+                            fontSize: 38,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white : AppColors.brandDark,
+                            shadows: [
+                              Shadow(
+                                color: AppColors.accentGreen.withOpacity(0.4),
+                                blurRadius: 20,
                               ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                      const SizedBox(height: 16),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          if (role == 'tenant')
-                            FilledButton.icon(
-                              onPressed: () => context.push(RouteNames.payRent),
-                              icon: const Icon(Icons.payments_outlined, size: 18),
-                              label: const Text('Pay rent'),
-                            ),
-                          OutlinedButton.icon(
-                            onPressed: () => context.push(RouteNames.receipts),
-                            icon: const Icon(Icons.receipt_long_outlined, size: 18),
-                            label: const Text('Receipts'),
+                            ],
                           ),
-                          OutlinedButton(
-                            onPressed: () => _showWalletActionsInfo(context, role),
-                            child: const Text('Top up / Send / Withdraw'),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '$count payments · ${s['scope'] ?? ''}',
+                          style: (isDark
+                              ? AppTextStyles.captionOnDark
+                              : AppTextStyles.bodySmallOnDark
+                                  .copyWith(color: AppColors.mid)).copyWith(fontWeight: FontWeight.w500),
+                        ),
+                        if (byMethod.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          Text('Usage breakdown', 
+                              style: isDark
+                                  ? AppTextStyles.captionOnDark.copyWith(fontSize: 10, uppercase: true)
+                                  : AppTextStyles.bodySmallOnDark.copyWith(color: AppColors.mid, fontSize: 10, uppercase: true)),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: byMethod.entries.map((e) {
+                              final pm = AppPaymentMethod.fromApi(e.key) ??
+                                  AppPaymentMethod.other;
+                              return Chip(
+                                backgroundColor: isDark
+                                    ? AppColors.glassFill
+                                    : Colors.white.withOpacity(0.8),
+                                side: BorderSide(
+                                    color: isDark ? AppColors.glassBorder : AppColors.accentGreen.withOpacity(0.2)),
+                                avatar: PaymentMethodIcon(
+                                    method: pm, size: 20, borderRadius: 4),
+                                label: Text(
+                                  '${pm.label} · ${formatUgx(_num(e.value))}',
+                                  style: (isDark
+                                          ? AppTextStyles.captionOnDark
+                                          : AppTextStyles.bodySmallOnDark
+                                              .copyWith(
+                                                  color: AppColors.brandDark))
+                                      .copyWith(fontSize: 11, fontWeight: FontWeight.w600),
+                                ),
+                              );
+                            }).toList(),
                           ),
                         ],
-                      ),
-                    ],
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            if (role == 'tenant')
+                              Expanded(
+                                child: FilledButton(
+                                  onPressed: () => context.push(RouteNames.payRent),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: AppColors.accentGreen,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  child: const Text('Pay Rent Now'),
+                                ),
+                              ),
+                            if (role == 'tenant') const SizedBox(width: 12),
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: () => context.push(RouteNames.receipts),
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: AppColors.accentGreen),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Text('View Receipts'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                loading: () => const GlassPanel(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(
+                        child: CircularProgressIndicator(
+                            color: AppColors.accentGreen)),
                   ),
-                );
-              },
-              loading: () => const GlassPanel(
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Center(child: CircularProgressIndicator(color: AppColors.accentGreen)),
+                ),
+                error: (err, __) => GlassPanel(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text('Could not load summary: $err'),
+                  ),
                 ),
               ),
-              error: (_, __) => GlassPanel(
-                child: Text(
-                  'Could not load wallet summary. Is the API running?',
-                  style: AppTextStyles.captionOnDark,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text('Recent transactions', style: AppTextStyles.headingMedium),
-            const SizedBox(height: 12),
+              const SizedBox(height: 32),
+              Text('Recent Transactions', 
+                style: AppTextStyles.headingMedium.copyWith(
+                  color: isDark ? Colors.white : AppColors.brandDark,
+                  fontSize: 18,
+                )),
+              const SizedBox(height: 16),
             tx.when(
               data: (list) {
                 if (list.isEmpty) {
-                  return Text('No transactions yet.', style: AppTextStyles.captionOnDark);
+                  return Text('No transactions yet.',
+                      style: isDark
+                          ? AppTextStyles.captionOnDark
+                          : AppTextStyles.bodySmallOnDark
+                              .copyWith(color: AppColors.mid));
                 }
                 return Column(
                   children: list.take(20).map((p) {
                     final m = p as Map<String, dynamic>;
                     final method = m['payment_method'] as String? ?? '';
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.only(bottom: 12),
                       child: GlassPanel(
-                        padding: const EdgeInsets.all(12),
-                        borderRadius: 12,
+                          padding: const EdgeInsets.all(16),
+                          borderRadius: 16,
                         child: Row(
                           children: [
-                            PaymentMethodIconFromApi(apiValue: method, size: 32),
-                            const SizedBox(width: 12),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accentGreen.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: PaymentMethodIconFromApi(
+                                    apiValue: method, size: 28),
+                              ),
+                              const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(formatUgx(_num(m['amount'])), style: AppTextStyles.bodyMediumOnDark),
+                                  Text(formatUgx(_num(m['amount'])),
+                                      style: isDark
+                                            ? AppTextStyles.bodyMediumOnDark.copyWith(fontWeight: FontWeight.bold)
+                                          : AppTextStyles.bodyMediumOnDark
+                                              .copyWith(
+                                                    color: AppColors.brandDark, fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 2),
                                   Text(
                                     '${m['payment_date'] ?? ''} · ${paymentMethodLabelFromApi(method)}',
-                                    style: AppTextStyles.captionOnDark,
+                                    style: isDark
+                                        ? AppTextStyles.captionOnDark
+                                        : AppTextStyles.bodySmallOnDark
+                                            .copyWith(color: AppColors.mid),
                                   ),
                                   if (m['property_name'] != null)
-                                    Text('${m['property_name']}', style: AppTextStyles.captionOnDark, maxLines: 1),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 2),
+                                        child: Text('${m['property_name']}',
+                                            style: (isDark
+                                                ? AppTextStyles.captionOnDark
+                                                : AppTextStyles.bodySmallOnDark
+                                                    .copyWith(color: AppColors.mid)).copyWith(fontSize: 10),
+                                            maxLines: 1),
+                                      ),
                                 ],
                               ),
                             ),
+                              const Icon(Icons.chevron_right_rounded, color: AppColors.mid, size: 20),
                           ],
                         ),
                       ),
@@ -173,11 +290,18 @@ class WalletScreen extends ConsumerWidget {
               },
               loading: () => const Padding(
                 padding: EdgeInsets.all(24),
-                child: Center(child: CircularProgressIndicator(color: AppColors.accentGreen)),
+                child: Center(
+                    child: CircularProgressIndicator(
+                        color: AppColors.accentGreen)),
               ),
-              error: (_, __) => Text('Could not load transactions.', style: AppTextStyles.captionOnDark),
+              error: (_, __) => Text('Could not load transactions.',
+                  style: isDark
+                      ? AppTextStyles.captionOnDark
+                      : AppTextStyles.bodySmallOnDark
+                          .copyWith(color: AppColors.brandDark)),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -187,8 +311,12 @@ class WalletScreen extends ConsumerWidget {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surfaceDark,
-        title: Text('Wallet actions', style: AppTextStyles.headingSmallOnDark),
+        backgroundColor: Theme.of(context).brightness == Brightness.dark 
+            ? AppColors.surfaceDark 
+            : Colors.white,
+        title: Text('Wallet actions', style: Theme.of(context).brightness == Brightness.dark 
+            ? AppTextStyles.headingSmallOnDark 
+            : AppTextStyles.headingSmall.copyWith(color: AppColors.brandDark)),
         content: Text(
           role == 'tenant'
               ? 'Your balance is the sum of rent payments recorded for your tenancy in RentDirect. '
@@ -201,7 +329,9 @@ class WalletScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('OK', style: AppTextStyles.bodySmallOnDark.copyWith(color: AppColors.accentGreen)),
+            child: Text('OK',
+                style: AppTextStyles.bodySmallOnDark
+                    .copyWith(color: AppColors.accentGreen)),
           ),
         ],
       ),
@@ -214,4 +344,3 @@ num _num(dynamic v) {
   if (v is String) return num.tryParse(v) ?? 0;
   return 0;
 }
-

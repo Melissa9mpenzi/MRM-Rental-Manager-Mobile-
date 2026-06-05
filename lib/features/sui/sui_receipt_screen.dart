@@ -35,7 +35,7 @@ class SuiReceiptScreen extends ConsumerWidget {
                   _row('Related To', '${d['related_to'] ?? 'Rent Payment'}'),
                   _row('Amount UGX', '${d['amount_ugx'] ?? '—'}'),
                   _row('TX Hash', '${d['tx_digest'] ?? '—'}'),
-                  _row('Date', '${(d['created_at'] ?? '').toString().substring(0, 16)}'),
+                  _row('Date', (d['created_at'] ?? '').toString().substring(0, 16)),
                   const SizedBox(height: 12),
                   if (d['explorer_url'] != null)
                     FilledButton(

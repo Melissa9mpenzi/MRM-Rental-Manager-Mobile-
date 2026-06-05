@@ -88,7 +88,7 @@ class _MessageThreadScreenState extends ConsumerState<MessageThreadScreen> {
                 children: [
                   const Icon(Icons.verified_user_outlined, size: 16, color: AppColors.accentGreen),
                   const SizedBox(width: 6),
-                  Text('Trust score ${trust}%', style: AppTextStyles.captionOnDark),
+                  Text('Trust score $trust%', style: AppTextStyles.captionOnDark),
                 ],
               ),
             ),
@@ -106,9 +106,9 @@ class _MessageThreadScreenState extends ConsumerState<MessageThreadScreen> {
                             margin: const EdgeInsets.only(bottom: 10),
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.12),
+                              color: Colors.blue.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                              border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                             ),
                             child: Text(
                               _msgText(m),

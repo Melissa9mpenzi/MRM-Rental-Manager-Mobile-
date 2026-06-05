@@ -17,7 +17,7 @@ class GovernmentWebOnlyScreen extends ConsumerWidget {
     final user = ref.watch(authProvider).user;
     final roleLabel = user?.role == 'system_admin'
         ? 'SYSTEM ADMINISTRATOR'
-        : (user?.role?.replaceAll('_', ' ').toUpperCase() ?? 'GOVERNMENT');
+        : (user?.role.replaceAll('_', ' ').toUpperCase() ?? 'GOVERNMENT');
 
     return AuthPageScaffold(
       body: Center(

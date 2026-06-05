@@ -27,7 +27,7 @@ class SettingsSectionPanel extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: accent.withOpacity(0.65), width: 3)),
+              border: Border(left: BorderSide(color: accent.withValues(alpha: 0.65), width: 3)),
             ),
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
             child: Row(
@@ -59,7 +59,7 @@ class SettingsSectionPanel extends StatelessWidget {
               ],
             ),
           ),
-          Divider(height: 1, color: Colors.white.withOpacity(0.08)),
+          Divider(height: 1, color: Colors.white.withValues(alpha: 0.08)),
           Padding(padding: const EdgeInsets.all(14), child: child),
         ],
       ),
@@ -79,9 +79,9 @@ class SettingsStatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withOpacity(0.35)),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -166,9 +166,9 @@ class SettingsNavTile extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 ),
                 child: Icon(icon, size: 18, color: const Color(0xFF00C896)),
               ),
@@ -182,7 +182,7 @@ class SettingsNavTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded, color: Colors.white.withOpacity(0.35)),
+              Icon(Icons.chevron_right_rounded, color: Colors.white.withValues(alpha: 0.35)),
             ],
           ),
         ),

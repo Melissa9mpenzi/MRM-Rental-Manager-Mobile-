@@ -33,7 +33,7 @@ class ProfileScreen extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 32,
-                  backgroundColor: AppColors.accentGreen.withOpacity(0.25),
+                  backgroundColor: AppColors.accentGreen.withValues(alpha: 0.25),
                   child: const Icon(Icons.person_rounded, size: 36, color: AppColors.accentGreen),
                 ),
                 const SizedBox(width: 16),
@@ -47,7 +47,7 @@ class ProfileScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppColors.accentGreen.withOpacity(0.15),
+                          color: AppColors.accentGreen.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text('KYC: $kycLabel', style: AppTextStyles.caption.copyWith(color: AppColors.accentGreen, fontWeight: FontWeight.w700)),

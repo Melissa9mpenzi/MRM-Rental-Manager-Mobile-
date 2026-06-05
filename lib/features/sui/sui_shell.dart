@@ -62,8 +62,8 @@ class SuiShell extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: const Color(0xFF22D3EE).withOpacity(0.4)),
-              color: const Color(0xFF22D3EE).withOpacity(0.08),
+              border: Border.all(color: const Color(0xFF22D3EE).withValues(alpha: 0.4)),
+              color: const Color(0xFF22D3EE).withValues(alpha: 0.08),
             ),
             child: Text(
               SuiConfig.label,
@@ -76,7 +76,7 @@ class SuiShell extends ConsumerWidget {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: const Color(0xFF0F1423),
-          border: Border(top: BorderSide(color: Colors.white.withOpacity(0.08))),
+          border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.08))),
         ),
         child: SafeArea(
           child: Row(

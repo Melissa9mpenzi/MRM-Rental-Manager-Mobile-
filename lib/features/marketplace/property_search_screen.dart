@@ -156,7 +156,7 @@ class _PropertySearchScreenState extends ConsumerState<PropertySearchScreen> {
             Text('Unit type', style: AppTextStyles.headingSmallOnDark),
             const SizedBox(height: 8),
             DropdownButtonFormField<String?>(
-              value: _unitType,
+              initialValue: _unitType,
               decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
               dropdownColor: AppColors.surfaceDark,
               style: AppTextStyles.bodySmallOnDark,

@@ -23,7 +23,7 @@ class ValuePropsStrip extends StatelessWidget {
             (e) => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(e.$1, size: 20, color: AppColors.accentGreen.withOpacity(0.85)),
+                Icon(e.$1, size: 20, color: AppColors.accentGreen.withValues(alpha: 0.85)),
                 const SizedBox(height: 4),
                 Text(e.$2, style: AppTextStyles.captionOnDark.copyWith(fontSize: 9)),
               ],

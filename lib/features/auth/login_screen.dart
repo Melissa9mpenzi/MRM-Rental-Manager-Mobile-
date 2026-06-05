@@ -189,12 +189,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  Expanded(child: Divider(color: AppColors.glassBorder)),
+                  const Expanded(child: Divider(color: AppColors.glassBorder)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text('or continue with', style: AppTextStyles.captionOnDark),
                   ),
-                  Expanded(child: Divider(color: AppColors.glassBorder)),
+                  const Expanded(child: Divider(color: AppColors.glassBorder)),
                 ],
               ),
               const SizedBox(height: 12),

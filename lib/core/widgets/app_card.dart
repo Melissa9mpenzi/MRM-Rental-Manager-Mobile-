@@ -32,7 +32,7 @@ class AppCard extends StatelessWidget {
           border: Border.all(color: AppColors.tealLight),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepCharcoal.withOpacity(0.06),
+              color: AppColors.deepCharcoal.withValues(alpha: 0.06),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -104,7 +104,7 @@ class StatCard extends StatelessWidget {
         border: Border.all(color: AppColors.tealLight),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepCharcoal.withOpacity(0.06),
+            color: AppColors.deepCharcoal.withValues(alpha: 0.06),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -118,7 +118,7 @@ class StatCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: iconBg ?? AppColors.forestTeal.withOpacity(0.12),
+                  color: iconBg ?? AppColors.forestTeal.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -136,8 +136,8 @@ class StatCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: trendPositive
-                        ? AppColors.success.withOpacity(0.1)
-                        : AppColors.error.withOpacity(0.1),
+                        ? AppColors.success.withValues(alpha: 0.1)
+                        : AppColors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

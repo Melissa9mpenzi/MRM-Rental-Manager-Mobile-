@@ -113,7 +113,7 @@ class SuiDashboardScreen extends ConsumerWidget {
         label: Text(label, style: const TextStyle(fontSize: 12)),
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
-          side: BorderSide(color: Colors.white.withOpacity(0.15)),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
           padding: const EdgeInsets.symmetric(vertical: 10),
         ),
       ),

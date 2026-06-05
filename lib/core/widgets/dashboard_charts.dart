@@ -51,7 +51,7 @@ class DashboardBarChart extends StatelessWidget {
                         widthFactor: 0.72,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: barColor.withOpacity(0.85),
+                            color: barColor.withValues(alpha: 0.85),
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                           ),
                         ),

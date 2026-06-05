@@ -55,7 +55,7 @@ abstract class AppTextStyles {
 
   static TextStyle get inputPlaceholder => GoogleFonts.inter(
         fontSize: 14,
-        color: AppColors.sageSlate.withOpacity(0.75),
+        color: AppColors.sageSlate.withValues(alpha: 0.75),
       );
 
   static TextStyle get amountMedium => GoogleFonts.poppins(

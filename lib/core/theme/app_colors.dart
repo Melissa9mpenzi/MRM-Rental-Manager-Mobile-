@@ -46,9 +46,9 @@ abstract class AppColors {
   static const Color warning = Color(0xFFF59E0B);
 
   // ── Opacity helpers ────────────────────────────────────────────
-  static Color tealWith(double opacity) => forestTeal.withOpacity(opacity);
-  static Color slateWith(double opacity) => sageSlate.withOpacity(opacity);
-  static Color charcoalWith(double opacity) => deepCharcoal.withOpacity(opacity);
+  static Color tealWith(double opacity) => forestTeal.withValues(alpha: opacity);
+  static Color slateWith(double opacity) => sageSlate.withValues(alpha: opacity);
+  static Color charcoalWith(double opacity) => deepCharcoal.withValues(alpha: opacity);
 
   // ── RentDirect mobile (dark / glass) ───────────────────────────
   static const Color canvasDark = Color(0xFF060A0C);

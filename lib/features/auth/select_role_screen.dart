@@ -92,7 +92,7 @@ class _SelectRoleScreenState extends ConsumerState<SelectRoleScreen> {
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: on
-                                  ? AppColors.accentGreen.withOpacity(0.2)
+                                  ? AppColors.accentGreen.withValues(alpha: 0.2)
                                   : AppColors.glassFill,
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(

@@ -179,9 +179,9 @@ class _ThreadList extends StatelessWidget {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: AppColors.accentGreen.withOpacity(0.2),
+                          backgroundColor: AppColors.accentGreen.withValues(alpha: 0.2),
                           child: Text(
-                            '${title.toString().isNotEmpty ? title.toString()[0].toUpperCase() : '?'}',
+                            title.toString().isNotEmpty ? title.toString()[0].toUpperCase() : '?',
                             style: AppTextStyles.caption.copyWith(color: Colors.white),
                           ),
                         ),
