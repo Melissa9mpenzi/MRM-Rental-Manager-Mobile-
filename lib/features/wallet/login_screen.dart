@@ -29,8 +29,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return PageScaffold(
       showAppBar: false,
       body: Padding(
@@ -43,29 +41,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               "Welcome Back 👋",
               style: AppTextStyles.headingMedium.copyWith(
                 fontSize: 28,
-                color: isDark ? Colors.white : AppColors.brandDark,
+                color: AppColors.brandDark,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               "Enter your phone number to continue",
-              style: (isDark ? AppTextStyles.captionOnDark : AppTextStyles.bodySmallOnDark)
-                  .copyWith(color: AppColors.mid),
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.mid),
             ),
             const SizedBox(height: 48),
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.glassFill : Colors.grey[200],
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Text(
                     "+256",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : AppColors.brandDark,
+                      color: AppColors.brandDark,
                     ),
                   ),
                 ),
@@ -74,15 +73,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
-                    style: TextStyle(color: isDark ? Colors.white : AppColors.brandDark),
+                    style: const TextStyle(color: AppColors.brandDark),
                     decoration: InputDecoration(
                       hintText: "700 000 000",
                       hintStyle: const TextStyle(color: AppColors.mid),
                       filled: true,
-                      fillColor: isDark ? AppColors.glassFill : Colors.grey[200],
+                      fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
                     ),
                   ),
@@ -97,9 +96,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   backgroundColor: AppColors.accentGreen,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text("SEND OTP", style: TextStyle(fontWeight: FontWeight.bold)),
+                child: const Text("SEND OTP",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           ],

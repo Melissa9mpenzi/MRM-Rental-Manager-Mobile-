@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 abstract class AppColors {
   // ── Primary Palette ────────────────────────────────────────────
   /// Page / scaffold background
-  static const Color pageBg = Color(0xFFF0F2F8);
+  static const Color pageBg = Color(0xFFFFFFFF);
 
   /// Card / surface background
   static const Color surface = Color(0xFFFFFFFF);
@@ -49,8 +49,10 @@ abstract class AppColors {
   static const Color sidebarBorder = Color(0x14FFFFFF); // white/8
 
   // ── Opacity helpers ────────────────────────────────────────────
-  static Color primaryWith(double opacity) => primary.withValues(alpha: opacity);
-  static Color textWith(double opacity) => textPrimary.withValues(alpha: opacity);
+  static Color primaryWith(double opacity) =>
+      primary.withValues(alpha: opacity);
+  static Color textWith(double opacity) =>
+      textPrimary.withValues(alpha: opacity);
   static Color borderWith(double opacity) => border.withValues(alpha: opacity);
 
   // ── Legacy dark canvas aliases (kept for dark-only areas like auth scaffold) ──
@@ -68,4 +70,8 @@ abstract class AppColors {
   static const Color forestTeal = Color(0xFF4F6EF7);
   static const Color pureWhite = Color(0xFFFFFFFF);
   static const Color tealLight = Color(0xFFEEF2FF);
+
+  // ── Back-compat getters used across existing screens ──────────
+  static Color get mid => textMuted;
+  static Color get brandDark => textPrimary;
 }

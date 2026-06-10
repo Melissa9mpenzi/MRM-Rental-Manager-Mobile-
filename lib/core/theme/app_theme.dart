@@ -12,7 +12,7 @@ class AppTheme {
         brightness: Brightness.light,
         extension: RentDirectThemeExtension.light,
         primary: AppColors.primary,
-        scaffold: AppColors.pageBg,
+        scaffold: Colors.white,
         onSurface: AppColors.textPrimary,
         muted: AppColors.textMuted,
         surfaceColor: AppColors.surface,
@@ -24,10 +24,11 @@ class AppTheme {
         brightness: Brightness.dark,
         extension: RentDirectThemeExtension.dark,
         primary: AppColors.accentGreen,
-        scaffold: AppColors.canvasDark,
-        onSurface: AppColors.textOnDark,
-        muted: AppColors.textMutedOnDark,
-        surfaceColor: AppColors.surfaceDark,
+        scaffold: Colors.white, // Force white background
+        onSurface:
+            AppColors.brandDark, // Force dark text for readability on white
+        muted: AppColors.textMuted,
+        surfaceColor: Colors.white,
         borderColor: const Color(0x1AFFFFFF),
       );
 
@@ -69,16 +70,16 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
-        backgroundColor: isDark ? AppColors.canvasDark : AppColors.surface,
-        foregroundColor: onSurface,
+        backgroundColor: Colors.white,
+        foregroundColor: AppColors.brandDark,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 17,
           fontWeight: FontWeight.w600,
-          color: onSurface,
+          color: AppColors.brandDark,
         ),
-        iconTheme: IconThemeData(color: isDark ? AppColors.textOnDark : AppColors.textPrimary),
+        iconTheme: const IconThemeData(color: AppColors.brandDark),
       ),
       textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
         bodyColor: onSurface,
@@ -86,7 +87,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? const Color(0x1AFFFFFF) : AppColors.surface,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: borderColor),
@@ -104,7 +105,8 @@ class AppTheme {
           color: isDark ? AppColors.textMutedOnDark : AppColors.textMuted,
           fontSize: 12,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -112,8 +114,10 @@ class AppTheme {
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle:
+              GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -121,8 +125,10 @@ class AppTheme {
           foregroundColor: primary,
           side: BorderSide(color: primary, width: 1.5),
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle:
+              GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600),
         ),
       ),
       checkboxTheme: CheckboxThemeData(

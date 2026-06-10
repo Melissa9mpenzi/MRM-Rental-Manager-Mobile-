@@ -7,7 +7,6 @@ import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_colors.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
 import 'package:rental_mgr_mobile/core/utils/format_ugx.dart';
-import 'package:rental_mgr_mobile/core/widgets/glass_panel.dart';
 import 'package:rental_mgr_mobile/core/widgets/page_scaffold.dart';
 
 final myLeaseProvider =
@@ -20,7 +19,6 @@ class TenantDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider).user;
     final leaseAsync = ref.watch(myLeaseProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return PageScaffold(
       title: 'Dashboard',
@@ -32,7 +30,7 @@ class TenantDashboardScreen extends ConsumerWidget {
             Text(
               'Hi, ${user?.fullName?.split(' ').first ?? 'Tenant'} 👋',
               style: AppTextStyles.headingMedium.copyWith(
-                color: isDark ? Colors.white : AppColors.brandDark,
+                color: AppColors.brandDark,
               ),
             ),
             const SizedBox(height: 24),
@@ -41,7 +39,18 @@ class TenantDashboardScreen extends ConsumerWidget {
                 final lease = data['lease'];
                 if (lease == null) return const Text("No active lease found.");
 
-                return GlassPanel(
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.grey.shade200),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4)),
+                    ],
+                  ),
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,10 +68,10 @@ class TenantDashboardScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(formatUgx(lease['monthly_rent'] ?? 0),
-                                  style: AppTextStyles.headingMedium
-                                      .copyWith(color: isDark ? AppColors.accentGreen : const Color(0xFF0D9488))),
+                                  style: AppTextStyles.headingMedium.copyWith(
+                                      color: const Color(0xFF0D9488))),
                               Text('Due: ${lease['end_date'] ?? 'N/A'}',
-                                  style: AppTextStyles.bodySmallOnDark
+                                  style: AppTextStyles.bodySmall
                                       .copyWith(color: AppColors.mid)),
                             ],
                           ),
@@ -70,11 +79,12 @@ class TenantDashboardScreen extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                                color: isDark ? Colors.orange.withOpacity(0.2) : Colors.orange.withOpacity(0.1),
+                                color: const Color(
+                                    0xFFFFF7ED), // Very light orange
                                 borderRadius: BorderRadius.circular(20)),
                             child: Text('DUE',
                                 style: TextStyle(
-                                    color: isDark ? Colors.orange : Colors.orange.shade800,
+                                    color: Colors.orange.shade900,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 10)),
                           )
@@ -138,7 +148,12 @@ class _QuickActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: GlassPanel(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade100),
+        ),
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
           children: [
