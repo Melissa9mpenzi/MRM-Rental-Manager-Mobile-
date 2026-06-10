@@ -164,9 +164,9 @@ class SettingsScreen extends ConsumerWidget {
 
           SettingsSectionPanel(
 
-            title: 'Payments & Sui',
+            title: 'Payments',
 
-            subtitle: 'Hybrid fiat and on-chain rent settlement.',
+            subtitle: 'MoMo, Airtel, card, and Sui rent.',
 
             accent: const Color(0xFFA78BFA),
 
@@ -176,17 +176,17 @@ class SettingsScreen extends ConsumerWidget {
 
                 const SettingsFieldRow(label: 'MoMo / Airtel', value: 'In-app checkout'),
 
-                const SettingsFieldRow(label: 'Sui signing', value: 'Web wallet bridge'),
+                const SettingsFieldRow(label: 'Sui pay', value: 'Platform wallet'),
 
                 SettingsNavTile(
 
                   icon: Icons.account_balance_wallet_outlined,
 
-                  title: 'Sui wallet',
+                  title: 'Wallet',
 
-                  subtitle: 'Balance, receive address, send via web',
+                  subtitle: 'Balance, receipts, trust score',
 
-                  onTap: () => context.push(RouteNames.suiWallet),
+                  onTap: () => context.push(RouteNames.wallet),
 
                 ),
 

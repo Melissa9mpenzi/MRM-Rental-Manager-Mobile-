@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rental_mgr_mobile/core/auth/auth_provider.dart';
+import 'package:rental_mgr_mobile/core/config/sui_access.dart';
 import 'package:rental_mgr_mobile/core/auth/onboarding_navigation.dart';
 import 'package:rental_mgr_mobile/core/routing/route_names.dart';
 import 'package:rental_mgr_mobile/core/theme/app_text_styles.dart';
@@ -199,6 +200,10 @@ String? _authRedirect(AuthState auth, GoRouterState state) {
     final dest = postLoginDestination(u);
     final onGateScreen = authGatePaths.contains(path) || path.startsWith(RouteNames.kyc);
     if (_isShellRoute(path) && !onGateScreen) return dest;
+  }
+
+  if (isSuiRoute(path) && !canAccessSuiPortal(u.role)) {
+    return RouteNames.wallet;
   }
 
   if ((u.role.startsWith('gov_') || u.role == 'system_admin') &&

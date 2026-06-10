@@ -35,8 +35,8 @@ List<DrawerMenuItem> drawerItemsForRole(String role) {
     const DrawerMenuItem(label: 'Rental Hub', icon: Icons.chat_bubble_outline, route: RouteNames.messages),
     const DrawerMenuItem(label: 'Notifications', icon: Icons.notifications_outlined, route: RouteNames.notifications),
     const DrawerMenuItem(label: 'Wallet', icon: Icons.account_balance_wallet_outlined, route: RouteNames.wallet),
-    const DrawerMenuItem(label: 'Receipts', icon: Icons.receipt_long_outlined, route: RouteNames.receipts),
-    const DrawerMenuItem(label: 'Sui Portal', icon: Icons.token_outlined, route: RouteNames.suiDashboard),
+    if (role != 'staff')
+      const DrawerMenuItem(label: 'Receipts', icon: Icons.receipt_long_outlined, route: RouteNames.receipts),
     const DrawerMenuItem(label: 'Profile', icon: Icons.person_outline, route: RouteNames.profile),
     const DrawerMenuItem(label: 'Settings', icon: Icons.settings_outlined, route: RouteNames.settings),
   ];

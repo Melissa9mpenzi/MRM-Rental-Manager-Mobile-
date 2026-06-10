@@ -22,7 +22,7 @@ class SuiShell extends ConsumerWidget {
       RouteNames.suiEscrow,
       RouteNames.suiWallet,
     ];
-    const labels = ['Dashboard', 'Transactions', 'Contracts', 'Wallet'];
+    const labels = ['Overview', 'Txns', 'Escrow', 'Wallets'];
     const icons = [
       Icons.dashboard_outlined,
       Icons.swap_horiz_rounded,
@@ -51,7 +51,7 @@ class SuiShell extends ConsumerWidget {
           tooltip: 'Back to app',
           onPressed: () => context.go(home),
         ),
-        title: Text('Sui Portal', style: AppTextStyles.titleOnDark),
+        title: Text('Sui console', style: AppTextStyles.titleOnDark),
         actions: [
           TextButton(
             onPressed: () => context.go(home),
